@@ -1,0 +1,39 @@
+﻿using System;
+namespace StackGame.Units.Models
+{
+	/// <summary>
+	/// Интерфейс, описывающий основные поля, универсальные для всех классов
+	/// </summary>
+	public interface IUnit
+    {
+		/// <summary>
+		/// Имя юнита
+		/// </summary>
+		string Name { get; }
+
+		/// <summary>
+		/// Максимальный урон, который может нанести юнит.
+		/// </summary>
+		int Attack { get; }
+
+		/// <summary>
+		/// Броня юнита.
+		/// </summary>
+		int Defence { get; }
+
+		/// <summary>
+		/// Текущий  уровень здоровья юнита.
+		/// </summary>
+		int Health { get; }
+
+		/// <summary>
+		/// Максимальный уровень здоровья юнита.
+		/// </summary>
+		int MaxHealth { get; }
+
+        bool isAlive { get; }
+
+		void GetDamage(int damage);
+		string ToString();
+    }
+}
