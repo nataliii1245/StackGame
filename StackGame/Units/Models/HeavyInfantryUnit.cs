@@ -18,20 +18,20 @@ namespace StackGame.Units.Models
 		/// <summary>
 		///Переопределена функция для получения урона с учетом брони
 		/// </summary>
-		public override void GetDamage(int damage)
+		public override void TakeDamage(int damage)
 		{
 			if (Defence > 0)
 			{
 				Defence -= damage;
 				if (Defence < 0)
 				{
-					base.GetDamage(Math.Abs(Defence));
+					base.TakeDamage(Math.Abs(Defence));
 					Defence = 0;
 				}
 			}
 			else
 			{
-				base.GetDamage(damage);
+				base.TakeDamage(damage);
 			}
 		}
 

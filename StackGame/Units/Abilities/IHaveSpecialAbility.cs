@@ -10,11 +10,11 @@ namespace StackGame.Units.Abilities
 		/// <summary>
 		/// Радиус поражения(измеряется в юнитах)
 		/// </summary>
-		int Range { get; }
+		int SpecialAbilityRange { get; }
 		/// <summary>
 		/// Сила навыка
 		/// </summary>
-		int Power { get; }
+		int SpecialAbilityPower { get; }
 
 		#endregion
 
@@ -23,7 +23,7 @@ namespace StackGame.Units.Abilities
 		/// <summary>
 		/// Применить специальный навык
 		/// </summary>
-		void DoSpecialAction(IArmy targetArmy, IUnit targetUnit);
+		void DoSpecialAction(IArmy targetArmy, int unitPosition);
 
 		#endregion
 	}

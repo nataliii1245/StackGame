@@ -101,7 +101,7 @@ namespace StackGame.Game
 		{
             if (first.isAlive)
 			{
-                second.GetDamage(first.Attack);
+                second.TakeDamage(first.Attack);
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using StackGame.Units.Abilities;
 using StackGame.Army;
@@ -8,8 +9,8 @@ namespace StackGame.Units.Models
     {
 		#region Свойства
 
-		public int Range { get; } = 3;
-		public int Power { get; } = 10;
+        public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ClericUnit).First().Value.SpecialAbilityRange;
+		public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ClericUnit).First().Value.SpecialAbilityPower;
 
 		#endregion
 
@@ -36,11 +37,11 @@ namespace StackGame.Units.Models
 			return (IUnit)MemberwiseClone();
 		}
 
-		public void DoSpecialAction(IArmy targetArmy, IUnit targetUnit)
+		public void DoSpecialAction(IArmy targetArmy, int unitPosition)
 		{
-			if (targetUnit is ICanBeHealed ICanBeHealedUnit)
+            if (targetArmy.Units[unitPosition] is ICanBeHealed ICanBeHealedUnit)
 			{
-				ICanBeHealedUnit.Heal(Power);
+				ICanBeHealedUnit.Heal(SpecialAbilityPower);
 			}
 		}
 

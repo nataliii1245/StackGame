@@ -65,7 +65,7 @@ namespace StackGame.Units.Models
 		/// <summary>
 		/// Метод позволяющий юниту получить урон
 		/// </summary>
-		public virtual void GetDamage(int damage)
+		public virtual void TakeDamage(int damage)
 		{
 			Health -= damage;
 			if (Health > MaxHealth)

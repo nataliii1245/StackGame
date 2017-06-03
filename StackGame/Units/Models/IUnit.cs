@@ -33,7 +33,7 @@ namespace StackGame.Units.Models
 
         bool isAlive { get; }
 
-		void GetDamage(int damage);
+		void TakeDamage(int damage);
 		string ToString();
     }
 }

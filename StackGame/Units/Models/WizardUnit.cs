@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using StackGame.Units.Abilities;
 using StackGame.Army;
@@ -6,8 +7,8 @@ namespace StackGame.Units.Models
 {
     public class WizardUnit: Unit, ICanBeHealed, IHaveSpecialAbility
     {
-		public int Range { get; } = 3;
-		public int Power { get; } = 0;
+        public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).First().Value.SpecialAbilityRange;
+        public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).First().Value.SpecialAbilityPower;
 
         #region Инициализация
 
@@ -27,15 +28,15 @@ namespace StackGame.Units.Models
 			}
 		}
 
-		public void DoSpecialAction(IArmy targetArmy, IUnit targetUnit)
+		public void DoSpecialAction(IArmy targetArmy, int unitPosition)
 		{
 			var random = new Random();
             var chance = random.Next(1000 / DateTime.Now.Millisecond);
 
-			if (chance > 0 && targetUnit is ICanBeCloned ICanBeClonedUnit)
+            if (chance > 0 && targetArmy.Units[unitPosition] is ICanBeCloned ICanBeClonedUnit)
 			{
-				var unit = ICanBeClonedUnit.Clone();
-				targetArmy.Units.Add(unit);
+				var clonedUnit = ICanBeClonedUnit.Clone();
+                targetArmy.Units.Add(clonedUnit);
 			}
 		}
 

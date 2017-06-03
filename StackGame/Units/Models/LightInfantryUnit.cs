@@ -1,12 +1,20 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using StackGame.Units.Abilities;
 using StackGame.Army;
 namespace StackGame.Units.Models
 {
-    public class LightInfantryUnit: Unit, ICanBeCloned, ICanBeHealed
+    public class LightInfantryUnit: Unit, ICanBeCloned, ICanBeHealed, IHaveSpecialAbility
     {
-		#region Инициализация
+        #region Свойства
+
+        public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.LightInfantryUnit).First().Value.SpecialAbilityRange;
+        public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.LightInfantryUnit).First().Value.SpecialAbilityPower;
+
+        #endregion
+
+        #region Инициализация
 
         public LightInfantryUnit(string name, int health, int attack) : base(name, health, attack)
         { }
@@ -29,6 +37,16 @@ namespace StackGame.Units.Models
 			return (IUnit)MemberwiseClone();
 		}
 
+		public void DoSpecialAction(IArmy targetArmy, int unitPosition)
+		{
+			Random random = new Random();
+			var chance = random.Next(100) / 100;
+
+            if (chance > 0 && targetArmy.Units[unitPosition] is ICanBeImproved ICanBeImprovedUnit)
+			{
+                ;
+			}
+		}
 		#endregion
 	}
 }

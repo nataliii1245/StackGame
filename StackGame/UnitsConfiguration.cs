@@ -39,8 +39,8 @@ namespace StackGame
 		public int Attack;
 		public int Defence;
 		public int Health;
-		public int SpecialActionPower;
-		public int SpecialActionRange;
+		public int SpecialAbilityPower;
+		public int SpecialAbilityRange;
 		public int Price;
 	}
 
@@ -54,8 +54,8 @@ namespace StackGame
                 Attack = 8,
                 Defence = 4,
                 Health = 10,
-                SpecialActionPower = 14,
-                SpecialActionRange = 3,
+                SpecialAbilityPower = 14,
+                SpecialAbilityRange = 3,
                 Price = 100
                 }
             },
@@ -66,8 +66,8 @@ namespace StackGame
                 Attack = 12,
                 Defence = 6,
                 Health = 10,
-                SpecialActionPower = 0,
-                SpecialActionRange = 1,
+                SpecialAbilityPower = 0,
+                SpecialAbilityRange = 1,
                 Price = 100
                 }
             },
@@ -87,8 +87,8 @@ namespace StackGame
                 Attack = 5,
                 Defence = 3,
                 Health = 8,
-                SpecialActionPower = 1,
-                SpecialActionRange = 4,
+                SpecialAbilityPower = 1,
+                SpecialAbilityRange = 4,
                 Price = 200
                 }
             },
@@ -98,8 +98,8 @@ namespace StackGame
                 Attack = 5,
                 Defence = 3,
                 Health = 6,
-                SpecialActionPower = 20,
-                SpecialActionRange = 5,
+                SpecialAbilityPower = 20,
+                SpecialAbilityRange = 5,
                 Price = 250
                 }
             },
