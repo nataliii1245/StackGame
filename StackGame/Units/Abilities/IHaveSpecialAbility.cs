@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using StackGame.Army;
 using StackGame.Units.Models;
 namespace StackGame.Units.Abilities
@@ -23,7 +24,7 @@ namespace StackGame.Units.Abilities
 		/// <summary>
 		/// Применить специальный навык
 		/// </summary>
-		void DoSpecialAction(IArmy targetArmy, int unitPosition);
+		void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position);
 
 		#endregion
 	}

@@ -62,7 +62,9 @@
     <Compile Include="Units\Improvments\HorseUnitImprovment.cs" />
     <Compile Include="Units\Improvments\ShieldUnitImprovment.cs" />
     <Compile Include="Units\Improvments\SpearUnitImprovment.cs" />
-    <Compile Include="Units\Improvments\UnitImprove.cs" />
+    <Compile Include="Units\Improvments\UnitToBeImproved.cs" />
+    <Compile Include="UnitImprovmentStats.cs" />
+    <Compile Include="UnitImprovmentTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Units\" />

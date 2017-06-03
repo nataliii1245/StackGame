@@ -15,6 +15,11 @@ namespace StackGame.Units.Models
 
 		#region Методы
 
+		public bool CanIBeImprovedWithFeatureOfThisType(Type type)
+		{
+			return true;
+		}
+
 		/// <summary>
 		///Переопределена функция для получения урона с учетом брони
 		/// </summary>

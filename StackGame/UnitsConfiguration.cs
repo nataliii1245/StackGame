@@ -114,7 +114,36 @@ namespace StackGame
 
 		};
 
-		
+
+        public static readonly Dictionary<UnitImprovmentTypes, UnitImprovmentStats> ImprovmentStats = new Dictionary<UnitImprovmentTypes, UnitImprovmentStats> 
+		{
+			{
+                UnitImprovmentTypes.Helmet, new UnitImprovmentStats
+				{
+					Defence = 20
+				}
+			},
+			{
+				UnitImprovmentTypes.Shield, new UnitImprovmentStats
+				{
+					Defence = 30
+				}
+			},
+			{
+				UnitImprovmentTypes.Spear, new UnitImprovmentStats
+				{
+                    Attack = 10
+				}
+			},
+			{
+				UnitImprovmentTypes.Horse, new UnitImprovmentStats
+				{
+					Health = 50,
+                    Attack = 10
+				}
+			}
+		};
+
 		public const int TotalPriceOfArmy = 100;
 		public static string[] PlayerName = { "First", "Second" };
 	}

@@ -28,15 +28,39 @@ namespace StackGame.Units.Models
 			}
 		}
 
-		public void DoSpecialAction(IArmy targetArmy, int unitPosition)
+        // ПЕРЕПИСАТЬ
+		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position)
 		{
 			var random = new Random();
-            var chance = random.Next(1000 / DateTime.Now.Millisecond);
+			var chance = random.Next(100)/100 == 0;
 
-            if (chance > 0 && targetArmy.Units[unitPosition] is ICanBeCloned ICanBeClonedUnit)
+			if (chance)
 			{
-				var clonedUnit = ICanBeClonedUnit.Clone();
-                targetArmy.Units.Add(clonedUnit);
+                var targetUnits = new List<ICanBeCloned>();
+				foreach (var index in targetRange)
+				{
+					if (index == position)
+					{
+						continue;
+					}
+
+					var unit = targetArmy.Units[index];
+					if (unit.isAlive && unit is ICanBeCloned ICanBeClonedUnit)
+					{
+						targetUnits.Add(ICanBeClonedUnit);
+					}
+				}
+
+				if (targetUnits.Count == 0)
+				{
+					return;
+				}
+
+				var targetUnit = targetUnits[random.Next(targetUnits.Count)];
+				var clonedUnit = targetUnit.Clone();
+				targetArmy.Units.Add(clonedUnit);
+
+				Console.WriteLine($"{ToString()} клонировал {targetUnit.ToString()}");
 			}
 		}
 

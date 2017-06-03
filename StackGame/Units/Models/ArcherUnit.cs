@@ -41,30 +41,37 @@ namespace StackGame.Units.Models
 			return (IUnit)MemberwiseClone();
 		}
 
-        public void DoSpecialAction(IArmy targetArmy, int unitPosition)
+        // ПЕРЕПИСАТЬ
+        public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position)
 		{
 			// Генерируем рандомную вероятность попадания 
 			Random random = new Random();
             var chance = random.Next(100)/100;
 
-            // Затем, в зависимости от радиуса поражения, считаем силу, с которой прилетит стрела в колено (ну или не в колено)
+            // 
             if (chance != 0)
-                switch (SpecialAbilityRange) {
-                    case 3:
-                        chance *= 3;
-                        break;
-                    case 4:
-						chance *= 2;
-						break;
-                    case 5:
-                        chance *= 1;
-                        break;
-                    default:
-                        break;
+
+            {
+				var targetUnits = new List<IUnit>();
+				foreach (var index in targetRange)
+				{
+					var unit = targetArmy.Units[index];
+					if (unit.isAlive)
+					{
+						targetUnits.Add(unit);
+					}
+				}
+
+				if (targetUnits.Count == 0)
+				{
+					return;
+				}
+
+				var targetUnit = targetUnits[random.Next(targetUnits.Count)];
+                targetUnit.TakeDamage(SpecialAbilityPower);
+
+                Console.WriteLine($"{ToString()} нанес {SpecialAbilityPower} {targetUnit.ToString()}");
             }
-			if (chance > 1)
-				chance = 1;
-            targetArmy.Units[unitPosition].TakeDamage((int)SpecialAbilityPower * chance);
 		}
 
 		#endregion

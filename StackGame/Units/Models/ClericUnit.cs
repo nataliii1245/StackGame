@@ -37,11 +37,33 @@ namespace StackGame.Units.Models
 			return (IUnit)MemberwiseClone();
 		}
 
-		public void DoSpecialAction(IArmy targetArmy, int unitPosition)
+        // ПЕРЕПИСАТЬ!!!
+		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position)
 		{
-            if (targetArmy.Units[unitPosition] is ICanBeHealed ICanBeHealedUnit)
+			var random = new Random();
+			var chance = random.Next(100)/100 == 0;
+
+			if (chance)
 			{
-				ICanBeHealedUnit.Heal(SpecialAbilityPower);
+                var targetUnits = new List<ICanBeHealed>();
+				foreach (var index in targetRange)
+				{
+					var unit = targetArmy.Units[index];
+					if (unit.isAlive  && unit is ICanBeHealed ICanBeHealedUnit)
+					{
+						targetUnits.Add(ICanBeHealedUnit);
+					}
+				}
+
+				if (targetUnits.Count == 0)
+				{
+					return;
+				}
+
+				var targetUnit = targetUnits[random.Next(targetUnits.Count)];
+                targetUnit.Heal(SpecialAbilityPower);
+
+                Console.WriteLine($"{ToString()} вылечил на {SpecialAbilityPower} {targetUnit.ToString()}");
 			}
 		}
 
