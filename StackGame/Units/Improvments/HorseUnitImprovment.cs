@@ -20,15 +20,22 @@ namespace StackGame.Units.Improvments
 		/// </summary>
 		private int horseAttack;
 
+		/// <summary>
+		/// Переопределяем защиту
+		/// </summary>
 		public override int Defence => base.Defence + horseHealth;
-
-        public override int Attack => base.Attack + horseAttack;
+		/// <summary>
+		/// Переопределяем атаку
+		/// </summary>
+		public override int Attack => base.Attack + horseAttack;
 
 		#endregion
 
 
-		#region Инициализация
 
+        #region Инициализация
+
+        // конструктор коня - улучшения 
         public HorseUnitImprovment(T unit) : base(unit)
         {
             var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Horse];
@@ -38,8 +45,11 @@ namespace StackGame.Units.Improvments
 
 		#endregion
 
+
+
 		#region Методы
 
+		// метод, который позволяет клонировать коня
 		public override IUnit Clone()
 		{
 			var clonedUnit = (T)unit.Clone();
@@ -48,6 +58,7 @@ namespace StackGame.Units.Improvments
 			return improvedClonedUnit;
 		}
 
+		// метод, позволяющий получать урон по коню
 		public override void TakeDamage(int damage)
 		{
 			if (horseHealth > 0)
@@ -67,7 +78,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-			return $"{ base.ToString() } |лошадь { horseHealth }|";
+            return $"{ base.ToString() } | лошадь ♞ cо здоровьем: { horseHealth } и атакой:| {horseAttack} приведена в строй!";
 		}
 
 		#endregion

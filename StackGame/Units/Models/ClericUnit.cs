@@ -37,31 +37,42 @@ namespace StackGame.Units.Models
 			return (IUnit)MemberwiseClone();
 		}
 
-        // ПЕРЕПИСАТЬ!!!
-		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position)
+		// реализация специального действия для клирика
+		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int position)
 		{
-			var random = new Random();
-			var chance = random.Next(100)/100 == 0;
+			// Генерируем рандомную вероятность попадания 
+			Random random = new Random();
+			var chance = random.Next(100) / 100;
 
-			if (chance)
+			// 
+			if (chance != 0) 
+
 			{
-                var targetUnits = new List<ICanBeHealed>();
-				foreach (var index in targetRange)
+				// генерируем список доступных юнитов
+				var possibleTargetUnits = new List<ICanBeHealed>();
+
+				// для каждого индекса доступных целей
+				foreach (var index in possibleUnitsPositions)
 				{
 					var unit = targetArmy.Units[index];
-					if (unit.isAlive  && unit is ICanBeHealed ICanBeHealedUnit)
+					// если юнит жив и может быть исцелен
+					if (unit.isAlive && unit is ICanBeHealed ICanBeHealedUnit)
 					{
-						targetUnits.Add(ICanBeHealedUnit);
+						// добавляем его в список юнитов, на которых мы можем повлиять
+                        possibleTargetUnits.Add(ICanBeHealedUnit);
 					}
 				}
 
-				if (targetUnits.Count == 0)
+				// если массив юнитов, на которых мы можем повлиять пуст
+				if (possibleTargetUnits.Count == 0)
 				{
 					return;
 				}
 
-				var targetUnit = targetUnits[random.Next(targetUnits.Count)];
-                targetUnit.Heal(SpecialAbilityPower);
+				//  выбираем рандомно юнита из списка доступных
+				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+				// отправляем юнита лечиться
+				targetUnit.Heal(SpecialAbilityPower); 
 
                 Console.WriteLine($"{ToString()} вылечил на {SpecialAbilityPower} {targetUnit.ToString()}");
 			}

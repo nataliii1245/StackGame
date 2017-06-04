@@ -9,6 +9,7 @@ namespace StackGame.Units.Improvments
     /// Указывем, что UnitToBeImproved может использовать в качестве T только классы, которые реализуют IUnit, ICanBeCloned, ICanBeImproved
     public abstract class UnitToBeImproved<T> : IUnit, ICanBeImproved, ICanBeCloned where T: IUnit, ICanBeCloned, ICanBeImproved
     {
+        
 		#region Свойства
 
 		/// <summary>
@@ -23,13 +24,12 @@ namespace StackGame.Units.Improvments
 		public virtual int Defence => unit.Defence;
 
         public bool isAlive => unit.isAlive;
-		
 
-        //public virtual bool IsDamaged => unit.IsDamaged;
+        #endregion
 
-		#endregion
 
-		#region Инициализация
+
+        #region Инициализация
 
 		protected UnitToBeImproved(T unit)
 		{
@@ -38,9 +38,10 @@ namespace StackGame.Units.Improvments
 
 		#endregion
 
-		#region Методы
 
-		// 
+
+        #region Методы
+
 		/// <summary>
 		/// Метод, который показывает, может ли быть навешено улучшение 
 		/// </summary>
@@ -57,8 +58,7 @@ namespace StackGame.Units.Improvments
             return unit.CanIBeImprovedWithFeatureOfThisType(type);
 		}
 
-
-		public abstract IUnit Clone();
+        public abstract IUnit Clone();
 
 		public virtual void TakeDamage(int damage)
 		{

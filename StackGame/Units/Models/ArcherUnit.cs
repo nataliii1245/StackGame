@@ -7,26 +7,44 @@ using StackGame.Army;
 namespace StackGame.Units.Models
 {
     /// <summary>
-    /// Лучник
+    /// Лучник, может быть исцелен, может быть клонирован, имеет специальную особенность
     /// </summary>
     public class ArcherUnit: Unit, ICanBeHealed, ICanBeCloned, IHaveSpecialAbility
     {
+        
         #region Свойства
 
+        /// <summary>
+        /// устанавливаем радиус специального действия
+        /// </summary>
         public int SpecialAbilityRange { get; } = StartStats.Stats.Where( p => p.Key == UnitType.ArcherUnit).First().Value.SpecialAbilityRange;
-        public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ArcherUnit).First().Value.SpecialAbilityPower;
+
+		/// <summary>
+		/// устанавливаем силу специального действия
+		/// </summary>
+		public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ArcherUnit).First().Value.SpecialAbilityPower;
 
 		#endregion
 
-		#region Инициализация
 
+
+        #region Инициализация
+
+        /// <summary>
+        /// конструктор лучника
+        /// </summary>
 		public ArcherUnit(string name, int health, int attack) : base(name, health, attack)
 		{ }
 
 		#endregion
 
+
+
 		#region Методы
 
+        /// <summary>
+        /// метод лечения для лучника
+        /// </summary>
 		public void Heal(int healthPower)
 		{
 			Health += healthPower;
@@ -36,13 +54,17 @@ namespace StackGame.Units.Models
 			}
 		}
 
+        /// <summary>
+        /// метод клонирования лучника
+        /// </summary>
 		public IUnit Clone()
 		{
 			return (IUnit)MemberwiseClone();
 		}
 
-        // ПЕРЕПИСАТЬ
-        public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position)
+
+        // реализация специального действия для лучника
+        public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int position)
 		{
 			// Генерируем рандомную вероятность попадания 
 			Random random = new Random();
@@ -52,22 +74,30 @@ namespace StackGame.Units.Models
             if (chance != 0)
 
             {
-				var targetUnits = new List<IUnit>();
-				foreach (var index in targetRange)
+                // генерируем список доступных юнитов
+                var possibleTargetUnits = new List<IUnit>();
+				
+                // для каждого индекса доступных целей
+                foreach (var index in possibleUnitsPositions)
 				{
 					var unit = targetArmy.Units[index];
-					if (unit.isAlive)
+					// если юнит жив
+                    if (unit.isAlive)
 					{
-						targetUnits.Add(unit);
+                        // добавляем его в список юнитов, на которых мы можем повлиять
+						possibleTargetUnits.Add(unit);
 					}
 				}
 
-				if (targetUnits.Count == 0)
+                // если массив юнитов, на которых мы можем повлиять пуст
+				if (possibleTargetUnits.Count == 0)
 				{
 					return;
 				}
 
-				var targetUnit = targetUnits[random.Next(targetUnits.Count)];
+                //  выбираем рандомно юнита из списка доступных
+				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+                // отправляем юнита получать урон
                 targetUnit.TakeDamage(SpecialAbilityPower);
 
                 Console.WriteLine($"{ToString()} нанес {SpecialAbilityPower} {targetUnit.ToString()}");

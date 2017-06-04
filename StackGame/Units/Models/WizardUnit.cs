@@ -28,39 +28,49 @@ namespace StackGame.Units.Models
 			}
 		}
 
-        // ПЕРЕПИСАТЬ
-		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> targetRange, int position)
+		// реализация специального действия для мага
+		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int position)
 		{
-			var random = new Random();
-			var chance = random.Next(100)/100 == 0;
+			// Генерируем рандомную вероятность попадания 
+			Random random = new Random();
+			var chance = random.Next(100) / 100;
 
-			if (chance)
+			// 
+			if (chance != 0)
+
 			{
-                var targetUnits = new List<ICanBeCloned>();
-				foreach (var index in targetRange)
+				// генерируем список доступных юнитов
+                var possibleTargetUnits = new List<ICanBeCloned>();
+
+				// для каждого индекса доступных целей
+				foreach (var index in possibleUnitsPositions)
 				{
-					if (index == position)
-					{
-						continue;
-					}
+                    if (index == position)
+                    {
+                        continue;
+                    }
 
 					var unit = targetArmy.Units[index];
+					// если юнит жив
 					if (unit.isAlive && unit is ICanBeCloned ICanBeClonedUnit)
 					{
-						targetUnits.Add(ICanBeClonedUnit);
+						// добавляем его в список юнитов, на которых мы можем повлиять
+						possibleTargetUnits.Add(ICanBeClonedUnit);
 					}
 				}
 
-				if (targetUnits.Count == 0)
+                if (possibleTargetUnits.Count == 0)
 				{
 					return;
 				}
 
-				var targetUnit = targetUnits[random.Next(targetUnits.Count)];
+				//  выбираем рандомно юнита из списка доступных
+				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+                //  отправляем юнита клонироваться
 				var clonedUnit = targetUnit.Clone();
 				targetArmy.Units.Add(clonedUnit);
 
-				Console.WriteLine($"{ToString()} клонировал {targetUnit.ToString()}");
+                Console.WriteLine($"{ToString()} клонировал {targetUnit.ToString()}");
 			}
 		}
 

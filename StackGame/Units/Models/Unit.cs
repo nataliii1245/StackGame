@@ -9,12 +9,12 @@ namespace StackGame.Units.Models
 		/// <summary>
 		/// Имя юнита
 		/// </summary>
-		public string Name { get; }
+		public virtual string Name { get; }
 
 		/// <summary>
 		/// Максимальный урон, который может нанести юнит.
 		/// </summary>
-		public int Attack { get; }
+		public virtual int Attack { get; }
 
 		/// <summary>
 		/// Броня юнита.
@@ -24,17 +24,17 @@ namespace StackGame.Units.Models
 		/// <summary>
 		/// Текущий  уровень здоровья юнита.
 		/// </summary>
-		public int Health { get; protected set; }
+		public virtual int Health { get; protected set; }
 
 		/// <summary>
 		/// Максимальный уровень здоровья юнита.
 		/// </summary>
-		public int MaxHealth { get; }
+        public virtual int MaxHealth { get; }
 
 		/// <summary>
 		/// Жив ли юнит?
 		/// </summary>
-		public bool isAlive
+		public virtual bool isAlive
 		{
 			get
 			{

@@ -8,6 +8,7 @@ namespace StackGame
 
 		public static void Main(string[] args)
 		{
+            Console.WriteLine("♘ ♞ ❂ ◎ ⇐ ♕ ♛");
 			int command = 0;
 			do
 			{

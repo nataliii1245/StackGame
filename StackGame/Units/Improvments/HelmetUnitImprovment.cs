@@ -12,7 +12,8 @@ namespace StackGame.Units.Improvments
 	/// </summary>
     public class HelmetUnitImprovment<T> : UnitToBeImproved<T> where T: IUnit, ICanBeImproved, ICanBeCloned
     {
-		#region Свойства
+
+        #region Свойства
 
 		/// <summary>
 		/// Защита шлема
@@ -22,14 +23,15 @@ namespace StackGame.Units.Improvments
         /// <summary>
         /// Переопределяем защиту
         /// </summary>
-        /// <value>The defence.</value>
 		public override int Defence => base.Defence + helmetDefence;
 
 		#endregion
 
 
-		#region Инициализация
 
+        #region Инициализация
+
+        // конструктор шлема - улучшения
 		public HelmetUnitImprovment(T unit) : base(unit)
         {
             var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Helmet];
@@ -38,8 +40,11 @@ namespace StackGame.Units.Improvments
 
 		#endregion
 
-		#region Методы
 
+
+        #region Методы
+
+        // метод, который позволяет клонировать шлем
 		public override IUnit Clone()
 		{
 			var clonedUnit = (T)unit.Clone();
@@ -48,6 +53,7 @@ namespace StackGame.Units.Improvments
 			return improvedClonedUnit;
 		}
 
+        // метод, позволяющий получать урон по шлему
 		public override void TakeDamage(int damage)
 		{
 			if (helmetDefence > 0)
@@ -67,7 +73,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-			return $"{ base.ToString() } | шлем { helmetDefence }|";
+			return $"{ base.ToString() } | шлем ♛ с защитой:  { helmetDefence } надет на рыцаря!|";
 		}
 
 		#endregion

@@ -39,6 +39,7 @@ namespace StackGame.Units.Models
 			return (IUnit)MemberwiseClone();
 		}
 
+		// реализация специального действия для легкого пехотинца
 		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int currentPosition)
 		{
 			Random random = new Random();
