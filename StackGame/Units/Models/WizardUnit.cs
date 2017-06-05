@@ -8,8 +8,10 @@ namespace StackGame.Units.Models
     public class WizardUnit: Unit, ICanBeHealed, IHaveSpecialAbility
     {
         public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).First().Value.SpecialAbilityRange;
+
         public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).First().Value.SpecialAbilityPower;
 
+        public bool isFriendly { get; private set; } = true;
         #region Инициализация
 
         public WizardUnit(string name, int health, int attack) : base(name, health, attack)
@@ -36,7 +38,7 @@ namespace StackGame.Units.Models
 			var chance = random.Next(100) / 100;
 
 			// 
-			if (chance != 0)
+			if (chance > 0.85)
 
 			{
 				// генерируем список доступных юнитов

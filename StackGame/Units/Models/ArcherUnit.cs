@@ -24,6 +24,8 @@ namespace StackGame.Units.Models
 		/// </summary>
 		public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ArcherUnit).First().Value.SpecialAbilityPower;
 
+        public bool isFriendly { get; private set; } = false;
+
 		#endregion
 
 

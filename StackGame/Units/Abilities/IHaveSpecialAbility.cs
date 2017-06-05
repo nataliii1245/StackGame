@@ -16,6 +16,10 @@ namespace StackGame.Units.Abilities
 		/// Сила навыка
 		/// </summary>
 		int SpecialAbilityPower { get; }
+        /// <summary>
+        /// Является ли данное действие мирным?
+        /// </summary>
+        bool isFriendly { get; }
 
 		#endregion
 

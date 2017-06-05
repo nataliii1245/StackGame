@@ -68,6 +68,12 @@
     <Compile Include="Units\Improvments\UnitToBeImproved.cs" />
     <Compile Include="UnitImprovmentStats.cs" />
     <Compile Include="UnitImprovmentTypes.cs" />
+    <Compile Include="Strategy\IStrategy.cs" />
+    <Compile Include="Strategy\OneVSOne.cs" />
+    <Compile Include="Strategy\ThreeVSThree.cs" />
+    <Compile Include="Strategy\AllVSAll.cs" />
+    <Compile Include="Game\FirstStageOpponents.cs" />
+    <Compile Include="Game\SpecialAbilityContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Units\" />
@@ -77,6 +83,7 @@
     <Folder Include="Game\" />
     <Folder Include="Units\Abilities\" />
     <Folder Include="Units\Improvments\" />
+    <Folder Include="Strategy\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,8 +12,10 @@ namespace StackGame.Units.Models
         #region Свойства
 
         public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.LightInfantryUnit).First().Value.SpecialAbilityRange;
+
         public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.LightInfantryUnit).First().Value.SpecialAbilityPower;
 
+        public bool isFriendly { get; private set; } = true;
         #endregion
 
         #region Инициализация
@@ -45,7 +47,7 @@ namespace StackGame.Units.Models
 			Random random = new Random();
 			var chance = random.Next(100) / 100;
 
-            if ( chance > 0) 
+            if ( chance > 0.7) 
             {
                 var possibleTargetUnits = new List<Tuple<int, ICanBeImproved>>();
                 foreach (int index in possibleUnitsPositions)
@@ -99,17 +101,21 @@ namespace StackGame.Units.Models
                     // если целевой юнит может быт улучшен улучшением рассматриваемого типа
 					if (targetUnit.CanIBeImprovedWithFeatureOfThisType(type))
 					{
-						// создаем улучшение универсального типа для юнита указанного типа
-						var unitImprove = type.MakeGenericType(targetUnit.GetType());
-                        // создает экземпляр улучшенного юнита, передавая тип создаваемого объекта и на кого повесить
-						var improvementUnit = (IUnit)Activator.CreateInstance(unitImprove, targetUnit);
+                        // реализация рандома для каждой шмотки
+                        if (random.Next(100) / 100 > 0.5)
+                        {
+                            // создаем улучшение универсального типа для юнита указанного типа
+                            var unitImprove = type.MakeGenericType(targetUnit.GetType());
+                            // создает экземпляр улучшенного юнита, передавая тип создаваемого объекта и на кого повесить
+                            var improvementUnit = (IUnit)Activator.CreateInstance(unitImprove, targetUnit);
 
-                        // помещаем этого улучшенного (одетого уже рыцаря) обратно в армию, на то же место
-						targetArmy.Units[targetIndex] = improvementUnit;
+                            // помещаем этого улучшенного (одетого уже рыцаря) обратно в армию, на то же место
+                            targetArmy.Units[targetIndex] = improvementUnit;
 
-						Console.WriteLine($"{ToString()} надел {unitImprove} на {targetUnit.ToString()}");
+                            Console.WriteLine($"{ToString()} надел {unitImprove} на {targetUnit.ToString()}");
 
-						break;
+                            break;
+                        }
 					}
                     // удаляем тип улучшения из списка доступных
 					types.Remove(type);

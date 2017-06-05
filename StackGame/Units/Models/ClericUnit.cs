@@ -10,8 +10,10 @@ namespace StackGame.Units.Models
 		#region Свойства
 
         public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ClericUnit).First().Value.SpecialAbilityRange;
+
 		public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ClericUnit).First().Value.SpecialAbilityPower;
 
+        public bool isFriendly { get; private set; } = true;
 		#endregion
 
 		#region Инициализация
