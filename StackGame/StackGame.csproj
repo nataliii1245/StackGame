@@ -53,7 +53,6 @@
     <Compile Include="Units\Creators\HeavyInfantryUnitCreator.cs" />
     <Compile Include="Units\Creators\LightInfantryUnitCreator.cs" />
     <Compile Include="Units\Creators\WizardUnitCreator.cs" />
-    <Compile Include="Units\UnitsFactoryMethod.cs" />
     <Compile Include="Army\IArmy.cs" />
     <Compile Include="Army\Army.cs" />
     <Compile Include="Game\Engine.cs" />
@@ -70,10 +69,11 @@
     <Compile Include="UnitImprovmentTypes.cs" />
     <Compile Include="Strategy\IStrategy.cs" />
     <Compile Include="Strategy\OneVSOne.cs" />
-    <Compile Include="Strategy\ThreeVSThree.cs" />
+    <Compile Include="Strategy\NVSN.cs" />
     <Compile Include="Strategy\AllVSAll.cs" />
     <Compile Include="Game\FirstStageOpponents.cs" />
     <Compile Include="Game\SpecialAbilityContainer.cs" />
+    <Compile Include="Units\UnitsFactoryMethod.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Units\" />

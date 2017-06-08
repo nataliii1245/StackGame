@@ -50,7 +50,9 @@ namespace StackGame.Game
 
 
 
-        #region Методы
+		#region Методы
+
+		
 		/// <summary>
 		/// Получить экземпляр класса
 		/// </summary>

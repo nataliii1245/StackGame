@@ -46,6 +46,7 @@ namespace StackGame.Game
 			return opponents;
 		}
 
+		
 		#endregion
 	}
 }

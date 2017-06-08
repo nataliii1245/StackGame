@@ -120,13 +120,13 @@ namespace StackGame
 			{
                 UnitImprovmentTypes.Helmet, new UnitImprovmentStats
 				{
-					Defence = 20
+					Defence = 10
 				}
 			},
 			{
 				UnitImprovmentTypes.Shield, new UnitImprovmentStats
 				{
-					Defence = 30
+					Defence = 15
 				}
 			},
 			{
@@ -138,7 +138,7 @@ namespace StackGame
 			{
 				UnitImprovmentTypes.Horse, new UnitImprovmentStats
 				{
-					Health = 50,
+                    Defence = 15,
                     Attack = 10
 				}
 			}

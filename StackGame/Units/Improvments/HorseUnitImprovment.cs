@@ -9,12 +9,12 @@ namespace StackGame.Units.Improvments
 {
     public class HorseUnitImprovment<T>: UnitToBeImproved<T> where T : IUnit, ICanBeImproved, ICanBeCloned
     {
-		#region Свойства
+        #region Свойства
 
-		/// <summary>
-		/// Здоровье лошади
-		/// </summary>
-		private int horseHealth;
+        /// <summary>
+        /// Здоровье лошади
+        /// </summary>
+        private int horseDefence;
 		/// <summary>
 		/// Сила лошади
 		/// </summary>
@@ -23,7 +23,7 @@ namespace StackGame.Units.Improvments
 		/// <summary>
 		/// Переопределяем защиту
 		/// </summary>
-		public override int Defence => base.Defence + horseHealth;
+		public override int Defence => base.Defence + horseDefence;
 		/// <summary>
 		/// Переопределяем атаку
 		/// </summary>
@@ -40,7 +40,7 @@ namespace StackGame.Units.Improvments
         {
             var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Horse];
             horseAttack = param.Attack;
-            horseHealth = param.Health;
+            horseDefence = param.Defence;
 		}
 
 		#endregion
@@ -61,13 +61,13 @@ namespace StackGame.Units.Improvments
 		// метод, позволяющий получать урон по коню
 		public override void TakeDamage(int damage)
 		{
-			if (horseHealth > 0)
+			if (horseDefence > 0)
 			{
-				horseHealth -= damage;
-				if (horseHealth < 0)
+				horseDefence -= damage;
+				if (horseDefence < 0)
 				{
-					base.TakeDamage(Math.Abs(horseHealth));
-					horseHealth = 0;
+					base.TakeDamage(Math.Abs(horseDefence));
+					horseDefence = 0;
 				}
 			}
 			else
@@ -78,7 +78,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-            return $"{ base.ToString() } | лошадь ♞ cо здоровьем: { horseHealth } и атакой:| {horseAttack} приведена в строй!";
+            return $"{ base.ToString() } | лошадь ♞ c защитой : { horseDefence } и атакой:| {horseAttack} приведена в строй!";
 		}
 
 		#endregion

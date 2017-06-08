@@ -3,10 +3,7 @@ namespace StackGame
 {
     public struct UnitImprovmentStats
     {
-		/// <summary>
-		/// Здоровье
-		/// </summary>
-		public int Health;
+
 		/// <summary>
 		/// Защита
 		/// </summary>
