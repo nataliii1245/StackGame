@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using StackGame.Units.Models;
+using StackGame.Units.Creators;
 using System.Collections.Generic;
-using StackGame;
+using StackGame.Observers;
 using StackGame.Army;
+using StackGame.Army.Factory;
 using StackGame.Commands;
 using StackGame.Strategy;
-using StackGame.Units.Models;
 using StackGame.Units.Abilities;
 namespace StackGame.Game
 {
@@ -27,11 +29,11 @@ namespace StackGame.Game
         /// <summary>
         /// Первая армия
         /// </summary>
-        private readonly IArmy firstArmy = new Army.Army("Армия №1");
+        private readonly IArmy firstArmy;
 		/// <summary>
 		/// Вторая армия
 		/// </summary>
-		private readonly IArmy secondArmy = new Army.Army("Армия №2");
+		private readonly IArmy secondArmy;
 		#endregion
 
 
@@ -43,7 +45,20 @@ namespace StackGame.Game
         /// </summary>
 		private Engine()
 		{
-            
+            var factory = new ArmyFactory();
+
+            firstArmy = new Army.Army("Армия №1", factory);
+            secondArmy = new Army.Army("Армия №2", factory);
+
+            List<IObserver> listOfObservers = new List<IObserver>()
+            {
+                new ConsoleBeepObserver(),
+                new FileObserver()
+            };
+
+            AddObservers(firstArmy, listOfObservers);
+            AddObservers(secondArmy, listOfObservers);
+
 		}
 
 		#endregion
@@ -64,6 +79,23 @@ namespace StackGame.Game
 			}
 
             return EngineEntity;
+		}
+
+		/// <summary>
+        /// Добавить возможных наблюдателей для армии
+		/// </summary>
+		private void AddObservers(IArmy targetArmy, List<IObserver> observers)
+		{
+			foreach (var unit in targetArmy.Units)
+			{
+                if (unit is ICanBeObserved ICanBeObservedUnit)
+				{
+					foreach (var observer in observers)
+					{
+                        ICanBeObservedUnit.RegisterObserver(observer);
+					}
+				}
+			}
 		}
 
 		/// <summary>

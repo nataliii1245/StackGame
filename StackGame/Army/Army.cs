@@ -4,6 +4,7 @@ using StackGame.Commands;
 using StackGame.Game;
 using StackGame.Units;
 using StackGame.Units.Models;
+using StackGame.Army.Factory;
 namespace StackGame.Army
 {
     public class Army: IArmy 
@@ -35,9 +36,9 @@ namespace StackGame.Army
         /// <summary>
         /// Конструктор
         /// </summary>
-		public Army(string name)
+        public Army(string name, IArmyFactory factory)
 		{
-            Units = CreateArmy(StartStats.TotalPriceOfArmy);
+            Units = factory.CreateArmy(StartStats.TotalPriceOfArmy);
             Name = name;
 		}
 
@@ -45,34 +46,34 @@ namespace StackGame.Army
 
 		#region Методы
 
-		/// <summary>
-		/// Создать армию
-		/// </summary>
-		protected List<IUnit> CreateArmy(int money)
-		{
-            var random = new Random();
+							///// <summary>
+							///// Создать армию
+							///// </summary>
+							//protected List<IUnit> CreateArmy(int money)
+							//{
+					  //          var random = new Random();
 
-			/// <summary>
-			/// Получаем минимальную стоимость юнита
-			/// </summary>
-			var minUnitPrice = UnitsFactoryMethod.MinPrice;
+							//	/// <summary>
+							//	/// Получаем минимальную стоимость юнита
+							//	/// </summary>
+							//	var minUnitPrice = UnitsFactoryMethod.MinPrice;
 
-			var units = new List<IUnit>();
-            while (money >= minUnitPrice)
-			{
-                var availableTypes = UnitsFactoryMethod.GetUnitCheaperOrEqual(money);
-                var index = random.Next(availableTypes.Count);
+							//	var units = new List<IUnit>();
+					  //          while (money >= minUnitPrice)
+							//	{
+					  //              var availableTypes = UnitsFactoryMethod.GetUnitCheaperOrEqual(money);
+					  //              var index = random.Next(availableTypes.Count);
 
-				var unitType = availableTypes[index];
+							//		var unitType = availableTypes[index];
 
-                var unit = UnitsFactoryMethod.CreateUnit(unitType);
-				units.Add(unit);
+					  //              var unit = UnitsFactoryMethod.CreateUnit(unitType);
+							//		units.Add(unit);
 
-                money -= UnitsFactoryMethod.GetPrice(unitType);
-			}
+					  //              money -= UnitsFactoryMethod.GetPrice(unitType);
+							//	}
 
-			return units;
-		}
+							//	return units;
+							//}
 		/// <summary>
 		/// Удалить мертвых юнитов
 		/// </summary>

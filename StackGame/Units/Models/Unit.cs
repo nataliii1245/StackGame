@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using StackGame.Observers;
+using StackGame.Units.Abilities;
 namespace StackGame.Units.Models
 {
-    public abstract class Unit : IUnit
+    public abstract class Unit : IUnit, ICanBeObserved
     {
         public static int count = 0;
 		#region Свойства
@@ -42,6 +45,11 @@ namespace StackGame.Units.Models
 			}
 		}
 
+		/// <summary>
+		/// список наблюдателей
+		/// </summary>
+		internal List<IObserver> listOfObservers = new List<IObserver>();
+
 		#endregion
 
 		#region Инициализаторы
@@ -73,7 +81,11 @@ namespace StackGame.Units.Models
 			if (Health < 0)
 			{
 				Health = 0;
-				// оповещение о том, что юнит умер!!!
+
+                var message = $" ☠️☠️☠️ {this.Name } был убит! ☠️☠️☠️";
+                NotifyObservers(message);
+
+                Console.WriteLine(message);
 			}
 		}
 
@@ -85,6 +97,33 @@ namespace StackGame.Units.Models
 			return $"Имя: {Name}, Уровень жизни: {Health}, Урон: {Attack}, Защита: {Defence}";
 		}
 
-		#endregion
-	}
+        /// <summary>
+        /// Зарагестрировать наблюдателя
+        /// </summary> 
+        public void RegisterObserver(IObserver observer)
+        {
+            listOfObservers.Add(observer);
+        }
+
+        /// <summary>
+        /// Удалить наблюдателя из списка
+        /// </summary>
+        public void RemoveObserver(IObserver observer)
+        {
+            listOfObservers.Remove(observer);
+        }
+
+        /// <summary>
+        /// Оповестить наблюдателя
+        /// </summary>
+        public void NotifyObservers(object @object)
+        {
+            foreach (var observer in listOfObservers)
+            {
+                observer.Update(@object);
+            }
+        }
+
+        #endregion
+    }
 }

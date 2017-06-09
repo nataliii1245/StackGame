@@ -27,7 +27,9 @@ namespace StackGame.Units.Models
 
 		#endregion
 
-		#region Методы
+
+
+        #region Методы
 
 		public void Heal(int healthPower)
 		{
@@ -40,7 +42,10 @@ namespace StackGame.Units.Models
 
 		public IUnit Clone()
 		{
-			return (IUnit)MemberwiseClone();
+			var clonedUnit = (Unit)MemberwiseClone();
+			clonedUnit.listOfObservers = listOfObservers.Select(observer => observer).ToList();
+
+			return clonedUnit;
 		}
 
 		// реализация специального действия для легкого пехотинца

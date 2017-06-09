@@ -63,8 +63,11 @@ namespace StackGame.Units.Models
         /// </summary>
 		public IUnit Clone()
 		{
-			return (IUnit)MemberwiseClone();
-		}
+            var clonedUnit = (Unit)MemberwiseClone();
+            clonedUnit.listOfObservers = listOfObservers.Select(observer => observer).ToList();
+
+			return clonedUnit;
+        }
 
 
         // реализация специального действия для лучника

@@ -83,6 +83,12 @@
     <Compile Include="Commands\ClearBattleFieldCommand.cs" />
     <Compile Include="Commands\ImproveCommand.cs" />
     <Compile Include="Commands\EndOfMovementCommand.cs" />
+    <Compile Include="Army\Factory\IArmyFactory.cs" />
+    <Compile Include="Army\Factory\ArmyFactory.cs" />
+    <Compile Include="Observers\IObserver.cs" />
+    <Compile Include="Observers\ConsoleBeepObserver.cs" />
+    <Compile Include="Observers\FileObserver.cs" />
+    <Compile Include="Units\Abilities\ICanBeObserved.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Units\" />
@@ -95,6 +101,8 @@
     <Folder Include="Strategy\" />
     <Folder Include="Commands\" />
     <Folder Include="Configs\" />
+    <Folder Include="Army\Factory\" />
+    <Folder Include="Observers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

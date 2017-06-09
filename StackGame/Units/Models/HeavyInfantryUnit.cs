@@ -35,7 +35,10 @@ namespace StackGame.Units.Models
 
 		public IUnit Clone()
 		{
-			return (IUnit)MemberwiseClone();
+			var clonedUnit = (Unit)MemberwiseClone();
+			clonedUnit.listOfObservers = listOfObservers.Select(observer => observer).ToList();
+
+			return clonedUnit;
 		}
 		#endregion
 	}
