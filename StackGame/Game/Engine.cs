@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using StackGame;
 using StackGame.Army;
+using StackGame.Commands;
 using StackGame.Strategy;
 using StackGame.Units.Models;
 using StackGame.Units.Abilities;
@@ -10,8 +11,9 @@ namespace StackGame.Game
 {
     public class Engine
     {
-		#region Свойства
+        #region Свойства
 
+        public readonly CommandManager CommandManager = new CommandManager();
 		/// <summary>
 		/// Стратегия боя
 		/// </summary>
@@ -22,15 +24,14 @@ namespace StackGame.Game
 		/// </summary>
 		private static Engine EngineEntity;
 
-		/// <summary>
-		/// Первая армия
-		/// </summary>
-		private IArmy firstArmy { get; set; }
+        /// <summary>
+        /// Первая армия
+        /// </summary>
+        private readonly IArmy firstArmy = new Army.Army("Армия №1");
 		/// <summary>
 		/// Вторая армия
 		/// </summary>
-		private IArmy secondArmy { get; set; }
-
+		private readonly IArmy secondArmy = new Army.Army("Армия №2");
 		#endregion
 
 
@@ -42,8 +43,7 @@ namespace StackGame.Game
         /// </summary>
 		private Engine()
 		{
-            firstArmy = new Army.Army("Армия №1");
-			secondArmy = new Army.Army("Армия №2");
+            
 		}
 
 		#endregion
@@ -82,10 +82,10 @@ namespace StackGame.Game
             SecondStageOfBattle();
 
             // Убираем убитых из армии
-            ClearBattleField(firstArmy);
-            ClearBattleField(secondArmy);
+            ClearBattleField();
 
             PrintArmyBeforeOrAfterStep("после");
+            CommandManager.EndTheMovement();
 
 			return true;
 		}
@@ -95,9 +95,10 @@ namespace StackGame.Game
 		/// </summary>
 		private void Hit(IUnit first, IUnit second)
 		{
-            if (first.isAlive)
+            if (first.isAlive && first.Attack > 0)
 			{
-                second.TakeDamage(first.Attack);
+                var command = new HitCommand(first, second, first.Attack);
+				CommandManager.Execute(command);
 			}
 		}
 
@@ -217,15 +218,12 @@ namespace StackGame.Game
 		}
 
 		/// <summary>
-		/// Удалить мертвые единицы армии
+		/// Удалить мертвых юнитов
 		/// </summary>
-        private void ClearBattleField(IArmy army)
+        private void ClearBattleField()
 		{
-            var dead = army.Units.Where(unit => !unit.isAlive).ToList();
-			foreach (var unitToBeDeleted in dead)
-			{
-				army.Units.Remove(unitToBeDeleted);
-			}
+            firstArmy.ClearBattleField();
+            secondArmy.ClearBattleField();
 		}
 
         private void PrintArmyBeforeOrAfterStep( string state) 

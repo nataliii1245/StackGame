@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using StackGame.Units.Abilities;
 using StackGame.Army;
+using StackGame.Game;
+using StackGame.Commands;
+
 namespace StackGame.Units.Models
 {
     public class ClericUnit: Unit, ICanBeCloned, ICanBeHealed, IHaveSpecialAbility
@@ -74,9 +77,9 @@ namespace StackGame.Units.Models
 				//  выбираем рандомно юнита из списка доступных
 				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
 				// отправляем юнита лечиться
-				targetUnit.Heal(SpecialAbilityPower); 
+                var command = new HealCommand(this, (IUnit)targetUnit, this.SpecialAbilityPower);
+				Engine.GetEngine().CommandManager.Execute(command);
 
-                Console.WriteLine($"{ToString()} вылечил на {SpecialAbilityPower} {targetUnit.ToString()}");
 			}
 		}
 

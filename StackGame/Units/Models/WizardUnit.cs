@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using StackGame.Units.Abilities;
 using StackGame.Army;
+using StackGame.Game;
+using StackGame.Units.Improvments;
+using StackGame.Commands;
+
 namespace StackGame.Units.Models
 {
     public class WizardUnit: Unit, ICanBeHealed, IHaveSpecialAbility
@@ -69,10 +73,11 @@ namespace StackGame.Units.Models
 				//  выбираем рандомно юнита из списка доступных
 				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
                 //  отправляем юнита клонироваться
-				var clonedUnit = targetUnit.Clone();
-				targetArmy.Units.Add(clonedUnit);
+				//var clonedUnit = targetUnit.Clone();
+				//targetArmy.Units.Add(clonedUnit);
 
-                Console.WriteLine($"{ToString()} клонировал {targetUnit.ToString()}");
+                var command = new CloneCommand(this, targetUnit, targetArmy);
+				Engine.GetEngine().CommandManager.Execute(command);
 			}
 		}
 

@@ -10,6 +10,7 @@ namespace StackGame.Units.Abilities
 		/// </summary>
 		bool CanIBeImprovedWithFeatureOfThisType(Type type);
 
+        int NumberOfImprovments { get; }
 		#endregion
 	}
 }

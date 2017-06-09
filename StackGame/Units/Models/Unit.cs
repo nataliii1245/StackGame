@@ -24,7 +24,7 @@ namespace StackGame.Units.Models
 		/// <summary>
 		/// Текущий  уровень здоровья юнита.
 		/// </summary>
-		public virtual int Health { get; protected set; }
+		public virtual int Health { get; set; }
 
 		/// <summary>
 		/// Максимальный уровень здоровья юнита.
@@ -65,7 +65,7 @@ namespace StackGame.Units.Models
 		/// <summary>
 		/// Метод позволяющий юниту получить урон
 		/// </summary>
-		public virtual void TakeDamage(int damage)
+		public  void TakeDamage(int damage)
 		{
 			Health -= damage;
 			if (Health > MaxHealth)

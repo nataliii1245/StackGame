@@ -31,6 +31,8 @@ namespace StackGame.Army
 		/// </summary>
 		string ToString();
 
+        void ClearBattleField();
+
 		#endregion
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using StackGame;
+using StackGame.Commands;
+using StackGame.Game;
 using StackGame.Units;
 using StackGame.Units.Models;
 namespace StackGame.Army
@@ -71,6 +72,28 @@ namespace StackGame.Army
 			}
 
 			return units;
+		}
+		/// <summary>
+		/// Удалить мертвых юнитов
+		/// </summary>
+		public void ClearBattleField()
+		{
+			var listOfDeadUnits = new List<KeyValuePair<int, IUnit>>();
+			for (var i = 0; i < Units.Count; i++)
+			{
+				var unit = Units[i];
+                if (unit.isAlive == false)
+				{
+					var element = new KeyValuePair<int, IUnit>(i, unit);
+                    listOfDeadUnits.Add(element);
+				}
+			}
+
+            if (listOfDeadUnits.Count > 0)
+			{
+                var command = new ClearBattleFieldCommand(this, listOfDeadUnits);
+                Engine.GetEngine().CommandManager.Execute(command);
+			}
 		}
 
 		/// <summary>

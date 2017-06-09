@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Reflection;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using StackGame.Units.Abilities;
-using StackGame.Units.Improvments;
 using StackGame.Army;
+using StackGame.Game;
+using StackGame.Units.Improvments;
+using StackGame.Commands;
+
 namespace StackGame.Units.Models
 {
     public class LightInfantryUnit: Unit, ICanBeCloned, ICanBeHealed, IHaveSpecialAbility
@@ -105,14 +107,15 @@ namespace StackGame.Units.Models
                         if (random.Next(100) / 100 > 0.5)
                         {
                             // создаем улучшение универсального типа для юнита указанного типа
-                            var unitImprove = type.MakeGenericType(targetUnit.GetType());
-                            // создает экземпляр улучшенного юнита, передавая тип создаваемого объекта и на кого повесить
-                            var improvementUnit = (IUnit)Activator.CreateInstance(unitImprove, targetUnit);
+                            var unitImprovment = type.MakeGenericType(targetUnit.GetType());
+							//// создает экземпляр улучшенного юнита, передавая тип создаваемого объекта и на кого повесить
+							//var improvedUnit = (IUnit)Activator.CreateInstance(unitImprove, targetUnit);
 
-                            // помещаем этого улучшенного (одетого уже рыцаря) обратно в армию, на то же место
-                            targetArmy.Units[targetIndex] = improvementUnit;
+							//// помещаем этого улучшенного (одетого уже рыцаря) обратно в армию, на то же место
+							//targetArmy.Units[targetIndex] = improvedUnit;
 
-                            Console.WriteLine($"{ToString()} надел {unitImprove} на {targetUnit.ToString()}");
+                            var command = new ImproveCommand(this, (IUnit)targetUnit, targetArmy, targetIndex, unitImprovment );
+							Engine.GetEngine().CommandManager.Execute(command);
 
                             break;
                         }

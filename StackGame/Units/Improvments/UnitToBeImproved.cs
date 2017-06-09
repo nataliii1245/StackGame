@@ -18,12 +18,18 @@ namespace StackGame.Units.Improvments
 		protected T unit;
 
         public string Name => unit.Name;
-		public int Health => unit.Health;
+		public int Health
+		{
+			get => unit.Health;
+			set => unit.Health = value;
+		}
         public int MaxHealth => unit.MaxHealth;
         public virtual int Attack => unit.Attack;
 		public virtual int Defence => unit.Defence;
 
         public bool isAlive => unit.isAlive;
+
+        public int NumberOfImprovments => unit.NumberOfImprovments + 1;
 
         #endregion
 

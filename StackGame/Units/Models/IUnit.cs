@@ -24,7 +24,7 @@ namespace StackGame.Units.Models
 		/// <summary>
 		/// Текущий  уровень здоровья юнита.
 		/// </summary>
-		int Health { get; }
+        int Health { get; set; }
 
 		/// <summary>
 		/// Максимальный уровень здоровья юнита.

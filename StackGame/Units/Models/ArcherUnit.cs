@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using StackGame.Units.Abilities;
 using StackGame.Army;
+using StackGame.Game;
+using StackGame.Commands;
 
 namespace StackGame.Units.Models
 {
@@ -100,9 +102,9 @@ namespace StackGame.Units.Models
                 //  выбираем рандомно юнита из списка доступных
 				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
                 // отправляем юнита получать урон
-                targetUnit.TakeDamage(SpecialAbilityPower);
-
-                Console.WriteLine($"{ToString()} нанес {SpecialAbilityPower} {targetUnit.ToString()}");
+                var command = new HitCommand(this, targetUnit, this.SpecialAbilityPower);
+				Engine.GetEngine().CommandManager.Execute(command);
+	
             }
 		}
 
