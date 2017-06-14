@@ -13,35 +13,31 @@ namespace StackGame.Units.Models
 		/// Имя юнита
 		/// </summary>
 		public virtual string Name { get; }
-
-		/// <summary>
+        /// <summary>
 		/// Максимальный урон, который может нанести юнит.
 		/// </summary>
 		public virtual int Attack { get; }
-
-		/// <summary>
+        /// <summary>
 		/// Броня юнита.
 		/// </summary>
 		public virtual int Defence { get; protected set; } = 0;
-
-		/// <summary>
+        /// <summary>
 		/// Текущий  уровень здоровья юнита.
 		/// </summary>
 		public virtual int Health { get; set; }
-
-		/// <summary>
+        /// <summary>
 		/// Максимальный уровень здоровья юнита.
 		/// </summary>
         public virtual int MaxHealth { get; }
-
-		/// <summary>
+        /// <summary>
 		/// Жив ли юнит?
 		/// </summary>
-		public virtual bool isAlive
+
+		public virtual bool IsAlive
 		{
 			get
 			{
-				return Health != 0;
+				return Health > 0;
 			}
 		}
 
@@ -55,15 +51,25 @@ namespace StackGame.Units.Models
 		#region Инициализаторы
 
 		/// <summary>
-		////Конструктор класса
+		/// Конструктор класса
 		/// </summary>
-		protected Unit(string name, int health, int attack)
+		protected Unit(string name, int health, int attack, int defence)
 		{
-            Name = name + count.ToString();
+            Name = name + "-" + count.ToString();
             count++;
 			Health = health;
 			MaxHealth = health;
 			Attack = attack;
+            Defence = defence;
+		}
+
+		/// <summary>
+		/// Конструктор класса
+		/// </summary>
+		protected Unit(string name)
+		{
+			Name = name + count.ToString();
+			count++;
 		}
 
 		#endregion
@@ -76,17 +82,16 @@ namespace StackGame.Units.Models
 		public  void TakeDamage(int damage)
 		{
 			Health -= damage;
-			if (Health > MaxHealth)
-				Health = MaxHealth;
-			if (Health < 0)
-			{
-				Health = 0;
+            if (Health > MaxHealth)
+            {
+                Health = MaxHealth;
+            }
 
-                var message = $" ☠️☠️☠️ {this.Name } был убит! ☠️☠️☠️";
-                NotifyObservers(message);
-
-                Console.WriteLine(message);
-			}
+            if (Health == 0)
+            {
+				var message = $" ☠️☠️☠️ {this.Name } был убит! ☠️☠️☠️";
+				NotifyObservers(message);
+            }
 		}
 
 		/// <summary>
@@ -94,11 +99,11 @@ namespace StackGame.Units.Models
 		/// </summary>
 		public override string ToString()
 		{
-			return $"Имя: {Name}, Уровень жизни: {Health}, Урон: {Attack}, Защита: {Defence}";
+			return $"{Name} [Уровень жизни: {Health}, Урон: {Attack}, Защита: {Defence}]";
 		}
 
         /// <summary>
-        /// Зарагестрировать наблюдателя
+        /// Зарегистрировать наблюдателя
         /// </summary> 
         public void RegisterObserver(IObserver observer)
         {

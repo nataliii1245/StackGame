@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using StackGame.Units.Abilities;
-using StackGame.Army;
-using StackGame.Configs;
 using System.Linq;
 namespace StackGame.Units.Models
 {
@@ -14,32 +11,27 @@ namespace StackGame.Units.Models
 
         #endregion
 
-
-
         #region Инициализация
 
-        public HeavyInfantryUnit(string name, int health, int attack) : base(name, health, attack)
-        { }
+        public HeavyInfantryUnit(string name, int health, int attack, int defence) : base(name, health, attack, defence) { }
 
 		#endregion
 
-
-
-		#region Методы
+        #region Методы
 
 		public bool CanIBeImprovedWithFeatureOfThisType(Type type)
 		{
 			return true;
 		}
 
-
-		public IUnit Clone()
+        public IUnit Clone()
 		{
 			var clonedUnit = (Unit)MemberwiseClone();
 			clonedUnit.listOfObservers = listOfObservers.Select(observer => observer).ToList();
 
 			return clonedUnit;
 		}
+
 		#endregion
 	}
 }

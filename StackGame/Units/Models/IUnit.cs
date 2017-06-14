@@ -1,5 +1,4 @@
-﻿using System;
-namespace StackGame.Units.Models
+﻿namespace StackGame.Units.Models
 {
 	/// <summary>
 	/// Интерфейс, описывающий основные поля, универсальные для всех классов
@@ -31,7 +30,7 @@ namespace StackGame.Units.Models
 		/// </summary>
 		int MaxHealth { get; }
 
-        bool isAlive { get; }
+        bool IsAlive { get; }
 
 		void TakeDamage(int damage);
 		string ToString();

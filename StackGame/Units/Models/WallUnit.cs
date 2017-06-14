@@ -1,7 +1,6 @@
 ﻿using SpecialUnits;
 using System.Reflection;
 
-using System;
 namespace StackGame.Units.Models
 {
     public class WallUnit: Unit
@@ -12,13 +11,9 @@ namespace StackGame.Units.Models
 		/// Стена "Гуляй-город"
 		/// </summary>
 		private readonly GulyayGorod wall;
-
-        public override string Name { get; } = "Гуляй-Город";
         /// <summary>
 		/// Здоровье
 		/// </summary>
-		//public override int Health => wall.GetCurrentHealth();
-
 		public override int Health
 		{
 			get => wall.GetCurrentHealth();
@@ -46,18 +41,15 @@ namespace StackGame.Units.Models
         /// <summary>
 		/// Есть ли еще здоровье
 		/// </summary>
-        public override bool isAlive => !wall.IsDead;
+        public override bool IsAlive => !wall.IsDead;
 
 		#endregion
 
+        #region Инициализация
 
-
-
-		#region Инициализация
-
-        public WallUnit(string name,int health, int attack, int defence, int price) : base(name, health, attack)
+        public WallUnit(string name,int health, int defence, int price) : base(name)
 		{
-			wall = new GulyayGorod(health, 0, 0);
+			wall = new GulyayGorod(health, defence, price);
 		}
 
 		#endregion
@@ -65,6 +57,8 @@ namespace StackGame.Units.Models
 
 
 		#region Методы
+
+
 
 		#endregion
 	}

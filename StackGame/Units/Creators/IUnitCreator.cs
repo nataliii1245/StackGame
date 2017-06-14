@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using StackGame.Units.Models;
+﻿using StackGame.Units.Models;
 namespace StackGame.Units.Creators
 {
     /// <summary>

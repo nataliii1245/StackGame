@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using StackGame.Configs;
 using StackGame.Units.Models;
 namespace StackGame.Units.Creators
 {
@@ -10,9 +11,10 @@ namespace StackGame.Units.Creators
 		/// <summary>
 		/// Создать мага
 		/// </summary>
-		public IUnit CreateUnit() {
-            var parameters = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).ToList().First();
-			return new ArcherUnit(parameters.Value.Name, parameters.Value.Health, parameters.Value.Attack);
+		public IUnit CreateUnit() 
+        {
+            var parameters = UnitParameters.Stats.Where(p => p.Key == UnitTypes.WizardUnit).ToList().First();
+            return new WizardUnit(parameters.Value.Name, parameters.Value.Health, parameters.Value.Attack, parameters.Value.Defence);
         }
     }
 }

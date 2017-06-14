@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using StackGame.Configs;
 using StackGame.Units.Abilities;
 using StackGame.Army;
 using StackGame.Game;
@@ -12,17 +12,17 @@ namespace StackGame.Units.Models
     {
 		#region Свойства
 
-        public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ClericUnit).First().Value.SpecialAbilityRange;
+        public int SpecialAbilityRange { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.ClericUnit).First().Value.SpecialAbilityRange;
 
-		public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ClericUnit).First().Value.SpecialAbilityPower;
+        public int SpecialAbilityPower { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.ClericUnit).First().Value.SpecialAbilityPower;
 
         public bool isFriendly { get; private set; } = true;
+
 		#endregion
 
 		#region Инициализация
 
-		public ClericUnit(string name, int health, int attack) : base(name, health, attack)
-        { }
+        public ClericUnit(string name, int health, int attack, int defence) : base(name, health, attack, defence) { }
 
 		#endregion
 
@@ -49,12 +49,9 @@ namespace StackGame.Units.Models
 		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int position)
 		{
 			// Генерируем рандомную вероятность попадания 
-			Random random = new Random();
-			var chance = random.Next(100) / 100;
+			double chance = Randomizer.CalculateChanceOfAction();
 
-			// 
-			if (chance != 0) 
-
+			if (chance >= 0.7) 
 			{
 				// генерируем список доступных юнитов
 				var possibleTargetUnits = new List<ICanBeHealed>();
@@ -62,9 +59,15 @@ namespace StackGame.Units.Models
 				// для каждого индекса доступных целей
 				foreach (var index in possibleUnitsPositions)
 				{
+					// исключаем из рассмотрения свою собственную позицию
+                    if (index == position)
+					{
+						continue;
+					}
+
 					var unit = targetArmy.Units[index];
 					// если юнит жив и может быть исцелен
-					if (unit.isAlive && unit is ICanBeHealed ICanBeHealedUnit)
+                    if (unit.IsAlive && unit.Health < unit.MaxHealth && unit is ICanBeHealed ICanBeHealedUnit)
 					{
 						// добавляем его в список юнитов, на которых мы можем повлиять
                         possibleTargetUnits.Add(ICanBeHealedUnit);
@@ -78,10 +81,10 @@ namespace StackGame.Units.Models
 				}
 
 				//  выбираем рандомно юнита из списка доступных
-				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+				var targetUnit = possibleTargetUnits[Randomizer.random.Next(possibleTargetUnits.Count)];
 				// отправляем юнита лечиться
-                var command = new HealCommand(this, (IUnit)targetUnit, this.SpecialAbilityPower);
-				Engine.GetEngine().CommandManager.Execute(command);
+                var command = new HealCommand(this, (IUnit)targetUnit, SpecialAbilityPower);
+				Engine.GetInstance().CommandManager.Execute(command);
 
 			}
 		}

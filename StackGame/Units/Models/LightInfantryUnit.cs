@@ -4,6 +4,7 @@ using System.Linq;
 using StackGame.Units.Abilities;
 using StackGame.Army;
 using StackGame.Game;
+using StackGame.Configs;
 using StackGame.Units.Improvments;
 using StackGame.Commands;
 
@@ -13,21 +14,19 @@ namespace StackGame.Units.Models
     {
         #region Свойства
 
-        public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.LightInfantryUnit).First().Value.SpecialAbilityRange;
+        public int SpecialAbilityRange { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.LightInfantryUnit).First().Value.SpecialAbilityRange;
 
-        public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.LightInfantryUnit).First().Value.SpecialAbilityPower;
+        public int SpecialAbilityPower { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.LightInfantryUnit).First().Value.SpecialAbilityPower;
 
         public bool isFriendly { get; private set; } = true;
+
         #endregion
 
         #region Инициализация
 
-        public LightInfantryUnit(string name, int health, int attack) : base(name, health, attack)
-        { }
+        public LightInfantryUnit(string name, int health, int attack, int defence) : base(name, health, attack, defence) { }
 
 		#endregion
-
-
 
         #region Методы
 
@@ -51,10 +50,9 @@ namespace StackGame.Units.Models
 		// реализация специального действия для легкого пехотинца
 		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int currentPosition)
 		{
-			Random random = new Random();
-			var chance = random.Next(100) / 100;
+			double chance = Randomizer.CalculateChanceOfAction();
 
-            if ( chance > 0.7) 
+            if (chance >= 0.5) 
             {
                 var possibleTargetUnits = new List<Tuple<int, ICanBeImproved>>();
                 foreach (int index in possibleUnitsPositions)
@@ -67,7 +65,7 @@ namespace StackGame.Units.Models
 
                     var currentUnit = targetArmy.Units[index];
                     // проверяем, что рассматриваемый юнит жив && рассматриваемый юнит может быть клонирован и улучшен
-                    if (currentUnit.isAlive && currentUnit is ICanBeCloned && currentUnit is ICanBeImproved ICanBeImprovedUnit)
+                    if (currentUnit.IsAlive && currentUnit is ICanBeCloned && currentUnit is ICanBeImproved ICanBeImprovedUnit)
                     {
                         // если условие выполнилось, то добавляем в список кортеж из индекса и самого улучшаемого юнита
                         possibleTargetUnits.Add(new Tuple<int, ICanBeImproved>(index, ICanBeImprovedUnit));
@@ -77,59 +75,52 @@ namespace StackGame.Units.Models
                 // если массив юнитов, которые попадают под воздействие, пуст, то невозможно осуществить действие
                 if (possibleTargetUnits.Count == 0)
 				{
-                    Console.WriteLine(" Невозможно одеть рыцаря!");
-					return;
+                    return;
 				}
-
-                // targetRow имеет тип Tuple< int, ICanBeImproved>
-                var targetRow = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+                // targetRow имеет тип Tuple<int, ICanBeImproved>
+                var targetRow = possibleTargetUnits[Randomizer.random.Next(possibleTargetUnits.Count)];
 				// получили индекс целевого юнита
                 var targetIndex = targetRow.Item1;
                 // получили самого целевого юнита
 				var targetUnit = targetRow.Item2;
-
                 // выявляем тип улучшаемого юнита при помощи рефлексии
 				var unitToBeImprovedType = typeof(UnitToBeImproved<>);
-
                 // получили все типы сборки
                 var types = unitToBeImprovedType.Assembly.GetTypes()
                                                 // отбираем только те, у которых есть универсальные родительские классы
                                                 .Where(type => type.BaseType != null && type.BaseType.IsGenericType)
 												// если родительский тип рассматриваемого класса можем привести к универсальному параметру T и он равен 
-												// приведенному к универсальному параметру T unitToBeImprovedType
-												.Where(type => type.BaseType.GetGenericTypeDefinition() == unitToBeImprovedType.GetGenericTypeDefinition())
+												// unitToBeImprovedType
+												.Where(type => type.BaseType.GetGenericTypeDefinition() == unitToBeImprovedType)
                                                 // получили список доступных улучшений
                                                 .ToList();
 
 				do
 				{
                     // из списка типов возможных улучшений берем произвольный
-					var type = types[random.Next(types.Count)];
+					var type = types[Randomizer.random.Next(types.Count)];
                     // если целевой юнит может быт улучшен улучшением рассматриваемого типа
 					if (targetUnit.CanIBeImprovedWithFeatureOfThisType(type))
 					{
-                        // реализация рандома для каждой шмотки
-                        if (random.Next(100) / 100 > 0.5)
-                        {
-                            // создаем улучшение универсального типа для юнита указанного типа
-                            var unitImprovment = type.MakeGenericType(targetUnit.GetType());
-							//// создает экземпляр улучшенного юнита, передавая тип создаваемого объекта и на кого повесить
-							//var improvedUnit = (IUnit)Activator.CreateInstance(unitImprove, targetUnit);
+                        // создаем улучшение универсального типа для юнита указанного типа
+                        var unitImprovment = type.MakeGenericType(targetUnit.GetType());
+						//// создает экземпляр улучшенного юнита, передавая тип создаваемого объекта и на кого повесить
+						//var improvedUnit = (IUnit)Activator.CreateInstance(unitImprove, targetUnit);
 
-							//// помещаем этого улучшенного (одетого уже рыцаря) обратно в армию, на то же место
-							//targetArmy.Units[targetIndex] = improvedUnit;
+						//// помещаем этого улучшенного (одетого уже рыцаря) обратно в армию, на то же место
+						//targetArmy.Units[targetIndex] = improvedUnit;
 
-                            var command = new ImproveCommand(this, (IUnit)targetUnit, targetArmy, targetIndex, unitImprovment );
-							Engine.GetEngine().CommandManager.Execute(command);
+                        var command = new ImproveCommand(this, (IUnit)targetUnit, targetArmy, targetIndex, unitImprovment );
+						Engine.GetInstance().CommandManager.Execute(command);
 
-                            break;
-                        }
+                        break;
 					}
                     // удаляем тип улучшения из списка доступных
 					types.Remove(type);
 				} while (types.Count != 0);
 			}
 		}
+
 		#endregion
 	}
 }

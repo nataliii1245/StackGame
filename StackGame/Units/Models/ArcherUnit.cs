@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using StackGame.Configs;
 using StackGame.Units.Abilities;
 using StackGame.Army;
 using StackGame.Game;
@@ -19,32 +19,26 @@ namespace StackGame.Units.Models
         /// <summary>
         /// устанавливаем радиус специального действия
         /// </summary>
-        public int SpecialAbilityRange { get; } = StartStats.Stats.Where( p => p.Key == UnitType.ArcherUnit).First().Value.SpecialAbilityRange;
-
-		/// <summary>
+        public int SpecialAbilityRange { get; } = UnitParameters.Stats.Where( p => p.Key == UnitTypes.ArcherUnit).First().Value.SpecialAbilityRange;
+        /// <summary>
 		/// устанавливаем силу специального действия
 		/// </summary>
-		public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.ArcherUnit).First().Value.SpecialAbilityPower;
+        public int SpecialAbilityPower { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.ArcherUnit).First().Value.SpecialAbilityPower;
 
         public bool isFriendly { get; private set; } = false;
 
 		#endregion
-
-
 
         #region Инициализация
 
         /// <summary>
         /// конструктор лучника
         /// </summary>
-		public ArcherUnit(string name, int health, int attack) : base(name, health, attack)
-		{ }
+        public ArcherUnit(string name, int health, int attack, int defence) : base(name, health, attack, defence) { }
 
 		#endregion
 
-
-
-		#region Методы
+        #region Методы
 
         /// <summary>
         /// метод лечения для лучника
@@ -73,13 +67,10 @@ namespace StackGame.Units.Models
         // реализация специального действия для лучника
         public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int position)
 		{
-			// Генерируем рандомную вероятность попадания 
-			Random random = new Random();
-            var chance = random.Next(100)/100;
+            // Генерируем рандомную вероятность попадания 
+            double chance = Randomizer.CalculateChanceOfAction();
 
-            // 
-            if (chance != 0)
-
+            if (chance >= 0.5)
             {
                 // генерируем список доступных юнитов
                 var possibleTargetUnits = new List<IUnit>();
@@ -87,9 +78,15 @@ namespace StackGame.Units.Models
                 // для каждого индекса доступных целей
                 foreach (var index in possibleUnitsPositions)
 				{
+					// исключаем из рассмотрения свою собственную позицию
+                    if (index == position)
+					{
+						continue;
+					}
+
 					var unit = targetArmy.Units[index];
 					// если юнит жив
-                    if (unit.isAlive)
+                    if (unit.IsAlive)
 					{
                         // добавляем его в список юнитов, на которых мы можем повлиять
 						possibleTargetUnits.Add(unit);
@@ -103,11 +100,10 @@ namespace StackGame.Units.Models
 				}
 
                 //  выбираем рандомно юнита из списка доступных
-				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+                var targetUnit = possibleTargetUnits[Randomizer.random.Next(possibleTargetUnits.Count)];
                 // отправляем юнита получать урон
-                var command = new HitCommand(this, targetUnit, this.SpecialAbilityPower);
-				Engine.GetEngine().CommandManager.Execute(command);
-	
+                var command = new HitCommand(this, targetUnit, SpecialAbilityPower);
+				Engine.GetInstance().CommandManager.Execute(command);
             }
 		}
 

@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using StackGame.Configs;
 using StackGame.Units.Abilities;
 using StackGame.Army;
 using StackGame.Game;
-using StackGame.Units.Improvments;
 using StackGame.Commands;
 
 namespace StackGame.Units.Models
 {
     public class WizardUnit: Unit, ICanBeHealed, IHaveSpecialAbility
     {
-        public int SpecialAbilityRange { get; } = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).First().Value.SpecialAbilityRange;
+        public int SpecialAbilityRange { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.WizardUnit).First().Value.SpecialAbilityRange;
 
-        public int SpecialAbilityPower { get; } = StartStats.Stats.Where(p => p.Key == UnitType.WizardUnit).First().Value.SpecialAbilityPower;
+        public int SpecialAbilityPower { get; } = UnitParameters.Stats.Where(p => p.Key == UnitTypes.WizardUnit).First().Value.SpecialAbilityPower;
 
         public bool isFriendly { get; private set; } = true;
+
         #region Инициализация
 
-        public WizardUnit(string name, int health, int attack) : base(name, health, attack)
+        public WizardUnit(string name, int health, int attack, int defence) : base(name, health, attack, defence)
         { }
 
 		#endregion
@@ -38,12 +39,10 @@ namespace StackGame.Units.Models
 		public void DoSpecialAction(IArmy targetArmy, IEnumerable<int> possibleUnitsPositions, int position)
 		{
 			// Генерируем рандомную вероятность попадания 
-			Random random = new Random();
-			var chance = random.Next(100) / 100;
+            double chance = Randomizer.CalculateChanceOfAction();
 
 			// 
-			if (chance > 0.85)
-
+			if (chance >= 0.85)
 			{
 				// генерируем список доступных юнитов
                 var possibleTargetUnits = new List<ICanBeCloned>();
@@ -58,7 +57,7 @@ namespace StackGame.Units.Models
 
 					var unit = targetArmy.Units[index];
 					// если юнит жив
-					if (unit.isAlive && unit is ICanBeCloned ICanBeClonedUnit)
+					if (unit.IsAlive && unit is ICanBeCloned ICanBeClonedUnit)
 					{
 						// добавляем его в список юнитов, на которых мы можем повлиять
 						possibleTargetUnits.Add(ICanBeClonedUnit);
@@ -71,13 +70,13 @@ namespace StackGame.Units.Models
 				}
 
 				//  выбираем рандомно юнита из списка доступных
-				var targetUnit = possibleTargetUnits[random.Next(possibleTargetUnits.Count)];
+				var targetUnit = possibleTargetUnits[Randomizer.random.Next(possibleTargetUnits.Count)];
                 //  отправляем юнита клонироваться
 				//var clonedUnit = targetUnit.Clone();
 				//targetArmy.Units.Add(clonedUnit);
 
                 var command = new CloneCommand(this, targetUnit, targetArmy);
-				Engine.GetEngine().CommandManager.Execute(command);
+				Engine.GetInstance().CommandManager.Execute(command);
 			}
 		}
 
