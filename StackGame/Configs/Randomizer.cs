@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace StackGame.Configs
+namespace StackGame
 {
+    /// <summary>
+    /// Класс для генерации рандомных величин
+    /// </summary>
     public static class Randomizer
     {
+        public static readonly Random random = new Random();
         /// <summary>
         /// Перемешать элементы, поданные на вход
         /// </summary>
 		public static IEnumerable<T> IntermixIt <T>(this IEnumerable<T> source)
 		{
-			Random rnd = new Random();
-			return source.OrderBy(item => rnd.Next());
+			return source.OrderBy(item => random.Next());
 		}
 
         public static double CalculateChanceOfAction()
         {
-			Random rnd = new Random();
-			return rnd.Next(101)/100;
+			return random.NextDouble();
         }
     }
 }

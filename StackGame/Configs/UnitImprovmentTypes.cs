@@ -1,7 +1,9 @@
-﻿using System;
-namespace StackGame
+﻿namespace StackGame
 {
-    public enum UnitImprovmentTypes
+	/// <summary>
+	/// Перечисление доступных для улучшения предметов
+	/// </summary>
+	public enum UnitImprovmentTypes
     {
 		/// <summary>
 		/// Шлем
