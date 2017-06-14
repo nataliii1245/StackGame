@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using StackGame.Commands;
 using StackGame.Game;
-using StackGame.Units;
 using StackGame.Units.Models;
 using StackGame.Army.Factory;
+
 namespace StackGame.Army
 {
+    /// <summary>
+    /// Армия
+    /// </summary>
     public class Army: IArmy 
     {
         #region Свойства
 
 		/// <summary>
-		/// Единицы армии
+		/// Список юнитов в армии
 		/// </summary>
 		public List<IUnit> Units { get; private set; }
 
 		/// <summary>
-		/// Все ли единицы армии мертвы
+		/// Все ли единицы армии мертвы?
 		/// </summary>
 		public bool IsAllDead
 		{
@@ -31,59 +33,31 @@ namespace StackGame.Army
 
 		#endregion
 
-		#region Инициализация
+        #region Инициализация
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        public Army(string name, IArmyFactory factory)
+        public Army(string name, IArmyFactory factory, int price)
 		{
-            Units = factory.CreateArmy(StartStats.TotalPriceOfArmy);
+            Units = factory.CreateArmy(price);
             Name = name;
 		}
 
 		#endregion
 
-		#region Методы
+        #region Методы
 
-							///// <summary>
-							///// Создать армию
-							///// </summary>
-							//protected List<IUnit> CreateArmy(int money)
-							//{
-					  //          var random = new Random();
-
-							//	/// <summary>
-							//	/// Получаем минимальную стоимость юнита
-							//	/// </summary>
-							//	var minUnitPrice = UnitsFactoryMethod.MinPrice;
-
-							//	var units = new List<IUnit>();
-					  //          while (money >= minUnitPrice)
-							//	{
-					  //              var availableTypes = UnitsFactoryMethod.GetUnitCheaperOrEqual(money);
-					  //              var index = random.Next(availableTypes.Count);
-
-							//		var unitType = availableTypes[index];
-
-					  //              var unit = UnitsFactoryMethod.CreateUnit(unitType);
-							//		units.Add(unit);
-
-					  //              money -= UnitsFactoryMethod.GetPrice(unitType);
-							//	}
-
-							//	return units;
-							//}
-		/// <summary>
-		/// Удалить мертвых юнитов
+        /// <summary>
+		/// Реализация функции удаления мертвых юнитов
 		/// </summary>
-		public void ClearBattleField()
+		public int ClearBattleField()
 		{
 			var listOfDeadUnits = new List<KeyValuePair<int, IUnit>>();
 			for (var i = 0; i < Units.Count; i++)
 			{
 				var unit = Units[i];
-                if (unit.isAlive == false)
+                if (unit.IsAlive == false)
 				{
 					var element = new KeyValuePair<int, IUnit>(i, unit);
                     listOfDeadUnits.Add(element);
@@ -93,16 +67,18 @@ namespace StackGame.Army
             if (listOfDeadUnits.Count > 0)
 			{
                 var command = new ClearBattleFieldCommand(this, listOfDeadUnits);
-                Engine.GetEngine().CommandManager.Execute(command);
+                Engine.GetInstance().CommandManager.Execute(command);
 			}
+
+            return listOfDeadUnits.Count;
 		}
 
 		/// <summary>
-		/// Преобразовать в строку
+		/// Преобразовать армию в строковое представление
 		/// </summary>
 		public override string ToString()
 		{
-			string army = $"Армия: { Name } :\n";
+			string army = $" { Name } :\n";
 			foreach (var unit in Units)
 			{
 				army += unit.ToString() + "\n";

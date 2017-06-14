@@ -1,9 +1,11 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using StackGame.Units.Models;
-using System.Collections.Generic;
 
 namespace StackGame.Army.Factory
 {
+    /// <summary>
+    /// Интерфейс фабричного метода для генерации армии рандомных юнитов
+    /// </summary>
     public interface IArmyFactory 
     {
 		#region Методы

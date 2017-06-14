@@ -1,11 +1,14 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
+using StackGame.Configs;
 using StackGame.Units.Models;
 using StackGame.Units.Creators;
-using System.Collections.Generic;
 
 namespace StackGame.Army.Factory
 {
+    /// <summary>
+    /// Фабричный метод для генерации армии из рандомных юнитов
+    /// </summary>
     public class ArmyFactory : IArmyFactory
     {
 		#region Свойства
@@ -17,90 +20,87 @@ namespace StackGame.Army.Factory
 		{
 			get
 			{
-				return StartStats.Stats.Select(parameter => parameter.Value.Price).Min();
+                return UnitParameters.Stats.Select(parameter => parameter.Value.Price).Min();
 			}
 		}
 		#endregion
 
-
-
-		#region Методы
-
-		/// <summary>
+        #region Методы
+        /// <summary>
 		/// Создать армию
 		/// </summary>
 		public List<IUnit> CreateArmy(int money)
 		{
-			var random = new Random();
-
-			/// <summary>
-			/// Получаем минимальную стоимость юнита
-			/// </summary>
+			// Получаем минимальную стоимость юнита
 			var minUnitPrice = MinPrice;
-
+            // список юнитов в армии
 			var units = new List<IUnit>();
+
 			while (money >= minUnitPrice)
 			{
+                // получили список всех типов юнитов, которые мы можем купить
 				var availableTypes = GetUnitCheaperOrEqual(money);
-				var index = random.Next(availableTypes.Count);
-
+                var index = Randomizer.random.Next(availableTypes.Count);
+                // получили рандомный тип юнита из списка доступных для покупки
 				var unitType = availableTypes[index];
-
+                // создали юнита
 				var unit = CreateUnit(unitType);
-				units.Add(unit);
 
+				// добавили его в список юнитов армии
+                units.Add(unit);
+                // вычли стоимость
 				money -= GetPrice(unitType);
 			}
 
-			return units;
-		}
+            return units;
+        }
 
 		/// <summary>
 		/// Получить типы юнитов, стоимость которых ниже или равна заданной
 		/// </summary>
-		public static List<UnitType> GetUnitCheaperOrEqual(int maxCost)
+		private List<UnitTypes> GetUnitCheaperOrEqual(int maxCost)
 		{
-			return StartStats.Stats.Where(p => p.Value.Price <= maxCost).Select(p => p.Key).ToList();
+            return UnitParameters.Stats.Where(p => p.Value.Price <= maxCost).Select(p => p.Key).ToList();
 		}
 
         /// <summary>
 		/// Создать единицу армии
 		/// </summary>
-		public static IUnit CreateUnit(UnitType unitType)
+		private IUnit CreateUnit(UnitTypes unitType)
 		{
+            // получили конкретного создателя
 			var creator = GetCreator(unitType);
-			return creator.CreateUnit();
+            return creator.CreateUnit();
 		}
 
 		/// <summary>
 		/// Получить стоимость конкретного юнита из его типа
 		/// </summary>
-		public static int GetPrice(UnitType unitType)
+		private int GetPrice(UnitTypes unitType)
 		{
-			return StartStats.Stats.Where(p => p.Key == unitType).Select(p => p.Value.Price).First();
+            return UnitParameters.Stats.Where(p => p.Key == unitType).Select(p => p.Value.Price).First();
 		}
 
 		/// <summary>
 		/// Получить создателя юнита
 		/// </summary>
-		private static IUnitCreator GetCreator(UnitType unitType)
+		private IUnitCreator GetCreator(UnitTypes unitType)
 		{
 			switch (unitType)
 			{
-				case UnitType.LightInfantryUnit:
+				case UnitTypes.LightInfantryUnit:
 					return new LightInfantryUnitCreator();
-				case UnitType.HeavyInfantryUnit:
+				case UnitTypes.HeavyInfantryUnit:
 					return new HeavyInfantryUnitCreator();
-				case UnitType.ArcherUnit:
+				case UnitTypes.ArcherUnit:
 					return new ArcherUnitCreator();
-				case UnitType.ClericUnit:
+				case UnitTypes.ClericUnit:
 					return new ClericUnitCreator();
-				case UnitType.WizardUnit:
+				case UnitTypes.WizardUnit:
 					return new WizardUnitCreator();
-				case UnitType.WallUnit:
+				case UnitTypes.WallUnit:
 					return new WallUnitCreator();
-
-				default:
+                default:
 					return null;
 			}
 		}
