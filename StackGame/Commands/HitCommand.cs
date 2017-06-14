@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using StackGame;
-using StackGame.Army;
-using StackGame.Strategy;
-using StackGame.Configs;
+using StackGame.Loggers;
 using StackGame.Units.Models;
-using StackGame.Units.Abilities;
+
 namespace StackGame.Commands
 {
+    /// <summary>
+    /// Команда для получения урона
+    /// </summary>
     public class HitCommand : ICommand
     {
 		#region Свойства
@@ -25,15 +23,12 @@ namespace StackGame.Commands
 		/// Возможный урон
 		/// </summary>
 		private readonly int unitDamage;
-
-		/// <summary>
+        /// <summary>
 		/// Наносимый урон
 		/// </summary>
 		private int damage;
 
 		#endregion
-
-
 
         #region Инициализация
 
@@ -46,13 +41,11 @@ namespace StackGame.Commands
 
 		#endregion
 
-
-
         #region Методы
 
-		public void Execute()
+		public void Execute(ILogger logger)
 		{
-            damage = unitDamage * (100 - (int)(enemy.Defence * Randomizer.CalculateChanceOfAction()))/100 ;
+            damage = unitDamage * (100 - (enemy.Defence))/100 ;
 
 			if (damage > enemy.Health)
 			{
@@ -61,10 +54,16 @@ namespace StackGame.Commands
 
 			enemy.TakeDamage(damage);
 
-			Console.WriteLine($" { unit.Name } нанес { damage } урона { enemy.Name }!");
+			Console.WriteLine($"\ud83d\udde1 { unit.Name } нанес { damage } урона { enemy.Name }!");
+
+            if (enemy.IsAlive == false) 
+            {
+                var message =  $"☠️ {enemy.Name } был убит {unit.Name}! ️";
+                logger.Log(message);
+            }
 		}
 
-        public void Undo()
+        public void Undo(ILogger logger)
 		{
             enemy.Health += damage;
 		}

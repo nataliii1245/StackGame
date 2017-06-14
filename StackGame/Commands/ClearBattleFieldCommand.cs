@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using StackGame;
+﻿using System.Collections.Generic;
+using System.Linq;
 using StackGame.Army;
-using StackGame.Strategy;
-using StackGame.Configs;
+using StackGame.Loggers;
 using StackGame.Units.Models;
-using StackGame.Units.Abilities;
+
 namespace StackGame.Commands
 {
+    /// <summary>
+    /// Команда для удаления мертвых единиц армии
+    /// </summary>
     public class ClearBattleFieldCommand: ICommand
     {
 		#region Свойства
@@ -24,8 +25,6 @@ namespace StackGame.Commands
 
 		#endregion
 
-
-
         #region Инициализация
 
 		public ClearBattleFieldCommand(IArmy targetArmy, List<KeyValuePair<int, IUnit>> listOfDeadUnits)
@@ -36,21 +35,24 @@ namespace StackGame.Commands
 
 		#endregion
 
-
-
         #region Методы
 
-		public void Execute()
+        public void Execute(ILogger logger)
 		{
-			foreach (var element in listOfDeadUnits)
+            var _listOfDeadUnits = listOfDeadUnits.Select(unit => unit).ToList();
+            // удаляем с конца во избежание смены индексов
+            _listOfDeadUnits.Reverse();
+
+			foreach (var element in _listOfDeadUnits)
 			{
                 targetArmy.Units.RemoveAt(element.Key);
 			}
 
-            Console.WriteLine($"Армия {targetArmy.Name} потеряла {listOfDeadUnits.Count} солдат!");
+            var message = $"✉️ В {targetArmy.Name} потери: {listOfDeadUnits.Count} !";
+            logger.Log(message);
 		}
 
-		public void Undo()
+		public void Undo(ILogger logger)
 		{
 			foreach (var element in listOfDeadUnits)
 			{

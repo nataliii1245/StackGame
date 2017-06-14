@@ -1,6 +1,10 @@
-﻿using System;
+﻿using StackGame.Loggers;
+
 namespace StackGame.Commands
 {
+    /// <summary>
+    /// Интерфейс для команд
+    /// </summary>
     public interface ICommand
     {
 		#region Методы
@@ -8,11 +12,11 @@ namespace StackGame.Commands
 		/// <summary>
 		/// Выполнить команду
 		/// </summary>
-		void Execute();
+        void Execute(ILogger logger);
 		/// <summary>
 		/// Отменить результат выполнения команды
 		/// </summary>
-		void Undo();
+        void Undo(ILogger logger);
 
 		#endregion
 	}

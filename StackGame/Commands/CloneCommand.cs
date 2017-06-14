@@ -1,16 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using StackGame;
+﻿using StackGame.Loggers;
 using StackGame.Army;
-using StackGame.Strategy;
-using StackGame.Configs;
 using StackGame.Units.Models;
 using StackGame.Units.Abilities;
+
 namespace StackGame.Commands
 {
     /// <summary>
-    /// Команда "клонировать"
+    /// Команда клонирования единицы армии
     /// </summary>
     public class CloneCommand : ICommand
     {
@@ -21,11 +17,11 @@ namespace StackGame.Commands
         /// </summary>
         private readonly IUnit wizardUnit;
         /// <summary>
-        /// Улучшаемая единица армии
+        /// Клонируемая единица армии
         /// </summary>
         private ICanBeCloned targetUnit;
         /// <summary>
-        /// Армия, в которой находится улучшаемая единица армии
+        /// Армия, в которой находится клонируемая единица армии
         /// </summary>
         private readonly IArmy targetArmy;
 
@@ -38,24 +34,22 @@ namespace StackGame.Commands
             this.wizardUnit = wizardUnit;
             this.targetUnit = targetUnit;
             this.targetArmy = targetArmy;
-
         }
 
         #endregion
 
         #region Методы
 
-        public void Execute()
+        public void Execute(ILogger logger)
         {
             var clonedUnit = targetUnit.Clone();
             targetArmy.Units.Add(clonedUnit);
 
-            var tmp = (IUnit)targetUnit;
-
-            Console.WriteLine($" { wizardUnit.Name } клонировал { tmp.Name }. В полку прибыло!");
+            var message = $"\ud83d\udd2e { wizardUnit.Name } клонировал { ((IUnit)targetUnit).Name }. В полку прибыло!";
+            logger.Log(message);
         }
 
-        public void Undo()
+        public void Undo(ILogger logger)
         {
             targetArmy.Units.RemoveAt(targetArmy.Units.Count - 1);
         }

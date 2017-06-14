@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using StackGame;
 using StackGame.Army;
-using StackGame.Strategy;
-using StackGame.Configs;
+using StackGame.Loggers;
 using StackGame.Units.Models;
-using StackGame.Units.Abilities;
+
 namespace StackGame.Commands
 {
+    /// <summary>
+    /// Команда улучшения тяжелого юнита
+    /// </summary>
     public class ImproveCommand : ICommand
     {
 		#region Свойства
@@ -50,15 +50,16 @@ namespace StackGame.Commands
 
 		#region Методы
 
-		public void Execute()
+		public void Execute(ILogger logger)
 		{
-            var improvedUnit = (IUnit)Activator.CreateInstance(typeOfImprovment);
+            var improvedUnit = (IUnit)Activator.CreateInstance(typeOfImprovment, targetUnit);
 			targetArmy.Units[targetUnitPosition] = improvedUnit;
 
-            Console.WriteLine($" { lightInfantryUnit.Name } надел { typeOfImprovment.GetGenericTypeDefinition() } на { targetUnit.Name }");
+            var message = $"❇️ { lightInfantryUnit.Name } надел { typeOfImprovment.GetGenericTypeDefinition() } на { targetUnit.Name }";
+            logger.Log(message);
 		}
 
-		public void Undo()
+		public void Undo(ILogger logger)
 		{
 			targetArmy.Units[targetUnitPosition] = targetUnit;
 		}

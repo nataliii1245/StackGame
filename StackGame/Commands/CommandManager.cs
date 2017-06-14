@@ -1,7 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using StackGame.Loggers;
+
 namespace StackGame.Commands
 {
+    /// <summary>
+    /// Командный менеджер
+    /// </summary>
     public class CommandManager
     {
 		#region Свойства
@@ -24,16 +28,29 @@ namespace StackGame.Commands
 		/// </summary>
 		private readonly Stack<ICommand> redoStack = new Stack<ICommand>();
 
-		#endregion
+        /// <summary>
+        /// Журнал событий 
+        /// </summary>
+        private readonly ILogger logger;
 
-		#region Методы
+        #endregion
 
-		/// <summary>
-	    ///  Выполнить команду
-	    /// </summary>
-		public void Execute(ICommand command)
+        #region Инициализация
+
+        public CommandManager( ILogger logger)
+        {
+            this.logger = logger;
+        }
+        #endregion
+
+        #region Методы
+
+        /// <summary>
+        ///  Выполнить команду
+        /// </summary>
+        public void Execute(ICommand command)
 		{
-            command.Execute();
+            command.Execute(logger);
             undoStack.Push(command);
         }
 
@@ -45,6 +62,7 @@ namespace StackGame.Commands
             ICommand separator = new EndOfMovementCommand();
             undoStack.Push(separator);
 
+            // очистить стек действий для повторения
             redoStack.Clear();
 		}
 
@@ -58,7 +76,7 @@ namespace StackGame.Commands
             while (CanUndoMovement && undoStack.Peek().GetType() != typeof(EndOfMovementCommand))
             {
                 ICommand lastCommand = undoStack.Pop();
-                lastCommand.Undo();
+                lastCommand.Undo(logger);
 
                 redoStack.Push(lastCommand);
             }
@@ -74,7 +92,7 @@ namespace StackGame.Commands
 			while (CanRedoMovement && redoStack.Peek().GetType() != typeof(EndOfMovementCommand))
 			{
 				ICommand command = redoStack.Pop();
-                command.Execute();
+                command.Execute(logger);
 
 				undoStack.Push(command);
 			}

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using StackGame;
-using StackGame.Army;
-using StackGame.Strategy;
-using StackGame.Configs;
+﻿using StackGame.Loggers;
 using StackGame.Units.Models;
-using StackGame.Units.Abilities;
+
 namespace StackGame.Commands
 {
+    /// <summary>
+    /// Команда для лечения юнита
+    /// </summary>
     public class HealCommand: ICommand
     {
 		#region Свойства
@@ -25,17 +22,14 @@ namespace StackGame.Commands
 		/// Максимальный уровень здоровья,который может восстановить клирик
 		/// </summary>
 		private readonly int healPower;
-
-		/// <summary>
+        /// <summary>
 		/// Уровень здоровья
 		/// </summary>
 		private int health;
 
 		#endregion
 
-
-
-		#region Инициализация
+        #region Инициализация
 
 		public HealCommand(IUnit clericUnit, IUnit targetUnit, int healPower)
 		{
@@ -46,29 +40,27 @@ namespace StackGame.Commands
 
 		#endregion
 
+        #region Методы
 
-
-		#region Методы
-
-		public void Execute()
+		public void Execute(ILogger logger)
 		{
-            health = (int)(healPower * Randomizer.CalculateChanceOfAction());
+            health = healPower;
 			
-            if (health > targetUnit.MaxHealth)
+            if (targetUnit.Health + health > targetUnit.MaxHealth)
 			{
-                health = targetUnit.MaxHealth;
+                health = targetUnit.MaxHealth - targetUnit.Health;
 			}
 
-            targetUnit.Health = health;
+            targetUnit.Health += health;
 
-            Console.WriteLine($" { clericUnit.Name } восстановил { health } здоровья { targetUnit.Name }!");
+            var message = $"\ud83d\udc8a { clericUnit.Name } восстановил { health } здоровья { targetUnit.Name }!";
+            logger.Log(message);
 		}
 
-		public void Undo()
+		public void Undo(ILogger logger)
 		{
             targetUnit.Health -= health;
-
+    	}
 		#endregion
 	}
-}
 }
