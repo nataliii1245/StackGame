@@ -1,5 +1,5 @@
 ﻿using System;
-using StackGame.Game;
+
 namespace StackGame.GUI
                    
 {
@@ -84,7 +84,7 @@ namespace StackGame.GUI
 				}
 				else
 				{
-					var message = "⁉️ Такой команды не существует! Повторите попытку.";
+					var message = "Такой команды не существует! Повторите попытку.";
 					ShowError(message);
 				}
 
@@ -102,7 +102,7 @@ namespace StackGame.GUI
 		/// <summary>
 		/// Считать стоимость армии
 		/// </summary>
-		public static int ReadArmyCost()
+		public static int ReadArmyCost(int min)
 		{
 			int? armyCost = null;
 
@@ -111,14 +111,14 @@ namespace StackGame.GUI
 			{
 				Console.Write("▶️ Введите стоимость армии: ");
 
-				if (int.TryParse(Console.ReadLine(), out int input) && input > 0)
+                if (int.TryParse(Console.ReadLine(), out int input) && input >= min)
 				{
                     armyCost = input;
 					isSuccessful = true;
 				}
 				else
 				{
-					var message = "⁉️ Недопустимое значение стоимости, попробуйте еще раз.";
+					var message = "Недопустимое значение стоимости, попробуйте еще раз.";
                     ShowError(message);
 				}
 
@@ -147,7 +147,7 @@ namespace StackGame.GUI
 				}
 				else
 				{
-					var message = "⁉️ Недопустимое значение, попробуйте еще раз.";
+					var message = "Недопустимое значение, попробуйте еще раз.";
                     ShowError(message);
 				}
 
@@ -176,40 +176,7 @@ namespace StackGame.GUI
 			Console.WriteLine();
 		}
 
-        public static void ShowResultsOfGame()
-        {
-			if (Engine.GetInstance().IsGameEndsFlag == true && Engine.GetInstance().IsGameResultPrintsYet == false)
-			{
-				if (Engine.GetInstance().firstArmy.Units.Count == 0 && Engine.GetInstance().secondArmy.Units.Count > 0)
-				{
-					Console.WriteLine($"Игра завершилась победой армии { Engine.GetInstance().secondArmy.Name }");
-					Console.WriteLine();
 
-				}
-				else if (Engine.GetInstance().secondArmy.Units.Count == 0 && Engine.GetInstance().firstArmy.Units.Count > 0)
-				{
-					Console.WriteLine($"Игра завершилась победой армии { Engine.GetInstance().firstArmy.Name }");
-					Console.WriteLine();
-				}
-				else
-				{
-					Console.WriteLine($"Игра завершилась вничью!");
-					Console.WriteLine();
-				}
-
-				if (Engine.GetInstance().firstArmy.Units.Count == 0)
-				{
-					Console.WriteLine($"Все единицы {Engine.GetInstance().firstArmy.Name} мертвы!");
-					Console.WriteLine(Engine.GetInstance().secondArmy.ToString());
-				}
-				else if (Engine.GetInstance().secondArmy.Units.Count == 0)
-				{
-					Console.WriteLine($"Все единицы {Engine.GetInstance().secondArmy.Name} мертвы!");
-					Console.WriteLine(Engine.GetInstance().firstArmy.ToString());
-				}
-				Engine.GetInstance().IsGameResultPrintsYet = true;
-			} 
-        }
 
 		#endregion
     }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using StackGame.GUI;
 using StackGame.Game;
+using StackGame.Configs;
 using StackGame.Strategy;
 
 namespace StackGame
@@ -42,7 +44,8 @@ namespace StackGame
                 switch (command)
                 {
                     case UserCommands.StartNewGame:
-                        var armyCost = ConsoleGUI.ReadArmyCost();
+						int min = UnitParameters.Stats.Select(p => p.Value.Price).ToList().Min();
+                        var armyCost = ConsoleGUI.ReadArmyCost(min);
                         Engine.GetInstance().StartNewGame(armyCost);
                         isGameStarts = true;
 
@@ -74,7 +77,7 @@ namespace StackGame
 
                         Engine.GetInstance().NextStep();
                         Console.WriteLine();
-                        ConsoleGUI.ShowResultsOfGame();
+                        ShowResultsOfGame();
                         break;
 
                     case UserCommands.PlayWhileNotEnd:
@@ -84,7 +87,7 @@ namespace StackGame
 
 						if (Engine.GetInstance().IsGameEndsFlag == true && Engine.GetInstance().IsGameResultPrintsYet == false)
 						{
-                            ConsoleGUI.ShowResultsOfGame();
+                            ShowResultsOfGame();
                         }
                         else if (Engine.GetInstance().IsGameEndsFlag == false)
                         {
@@ -173,5 +176,41 @@ namespace StackGame
             }
             while (command.Value != UserCommands.Exit);
         }
-    }
+
+		public static void ShowResultsOfGame()
+		{
+			if (Engine.GetInstance().IsGameEndsFlag == true && Engine.GetInstance().IsGameResultPrintsYet == false)
+			{
+				if (Engine.GetInstance().firstArmy.Units.Count == 0 && Engine.GetInstance().secondArmy.Units.Count > 0)
+				{
+					Console.WriteLine($"Игра завершилась победой армии { Engine.GetInstance().secondArmy.Name }");
+					Console.WriteLine();
+
+				}
+				else if (Engine.GetInstance().secondArmy.Units.Count == 0 && Engine.GetInstance().firstArmy.Units.Count > 0)
+				{
+					Console.WriteLine($"Игра завершилась победой армии { Engine.GetInstance().firstArmy.Name }");
+					Console.WriteLine();
+				}
+				else
+				{
+					Console.WriteLine($"Игра завершилась вничью!");
+					Console.WriteLine();
+				}
+
+				if (Engine.GetInstance().firstArmy.Units.Count == 0)
+				{
+					Console.WriteLine($"Все единицы {Engine.GetInstance().firstArmy.Name} мертвы!");
+					Console.WriteLine(Engine.GetInstance().secondArmy.ToString());
+				}
+				else if (Engine.GetInstance().secondArmy.Units.Count == 0)
+				{
+					Console.WriteLine($"Все единицы {Engine.GetInstance().secondArmy.Name} мертвы!");
+					Console.WriteLine(Engine.GetInstance().firstArmy.ToString());
+				}
+				Engine.GetInstance().IsGameResultPrintsYet = true;
+			}
+		}
+
+	}
 }
