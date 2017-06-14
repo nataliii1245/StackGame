@@ -8,13 +8,11 @@ namespace StackGame.Observers
         #region Свойства
 
         private readonly string fileName = "DeadLog.txt";
-
         private readonly string fullPath;
+
 		#endregion
 
-
-
-		#region Инициализация
+        #region Инициализация
 
         public FileObserver() 
         {
@@ -29,15 +27,11 @@ namespace StackGame.Observers
 
 		#endregion
 
-
-
-		#region Методы
+        #region Методы
 
         /// <summary>
         /// Метод, вызывает обновление наблюдателя
         /// </summary>
-        /// <returns>The update.</returns>
-        /// <param name="object">Object.</param>
         public void Update(object @object)
         {
             if( @object is string message)

@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using StackGame;
 using StackGame.Army;
 using StackGame.Game;
-using StackGame.Units.Models;
 using StackGame.Units.Abilities;
 namespace StackGame.Strategy
 {
     public class AllVSAll : IStrategy
     {
-		#region Свойства
-		#endregion
-
-		#region Инициализаторы
-		#endregion
-
-		#region Методы
+        #region Методы
 
 		public List<FirstStageOpponents> GetOpponentsQueue(IArmy firstArmy, IArmy secondArmy)
 		{
@@ -29,7 +21,7 @@ namespace StackGame.Strategy
 
             for (int i = 0; i < minUnitsCountForBothArmies; i++)
             {
-                var opponents = new FirstStageOpponents(firstArmy.Units[i], secondArmy.Units[i]);
+                var opponents = new FirstStageOpponents(firstArmy, i , secondArmy, i);
 
                 var pairQueue = new List<FirstStageOpponents>
                 {
@@ -37,8 +29,7 @@ namespace StackGame.Strategy
                     opponents.Swap()
                 };
 
-                Random rnd = new Random();
-                opponentsQueue = opponentsQueue.Concat(pairQueue.OrderBy(item => rnd.Next())).ToList();
+                opponentsQueue = opponentsQueue.Concat(pairQueue.OrderBy(item => Randomizer.random.Next())).ToList();
             }
 
             return opponentsQueue;
@@ -51,21 +42,19 @@ namespace StackGame.Strategy
             if (unitPosition < enemyArmy.Units.Count )
 			{
 				return null;
+            }
 
-			}
-
-
-			var targetArmy = unit.isFriendly ? allyArmy : enemyArmy;
+            var targetArmy = unit.isFriendly ? allyArmy : enemyArmy;
 
 			Tuple<int, int> usingOfSpecialAbilityArea;
 
-			if (targetArmy == allyArmy)
+			if (unit.isFriendly)
 			{
 				usingOfSpecialAbilityArea = GetFirstEndLastIndexesOfAllyArmy(allyArmy, unitPosition, unit.SpecialAbilityRange);
 			}
 			else
 			{
-				if (unitPosition - unit.SpecialAbilityRange <= 0)
+                if (unitPosition - unit.SpecialAbilityRange >= targetArmy.Units.Count)
 				{
 					return null;
 				}
@@ -94,6 +83,12 @@ namespace StackGame.Strategy
 		private Tuple<int, int> GetFirstEndLastIndexesOfEnemyArmy(IArmy army, int unitPosition, int unitRange)
 		{
             var startPosition = unitPosition - unitRange;
+
+            if (startPosition < 0)
+            {
+                startPosition = 0;
+            }
+
             var endPosition = startPosition + 2 * unitRange;
 
 			if (endPosition >= army.Units.Count)
@@ -126,6 +121,7 @@ namespace StackGame.Strategy
 
 			return new Tuple<int, int>(startPosition, endPosition);
 		}
+
 		#endregion
 	}
 }
