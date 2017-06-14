@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using StackGame.Units.Models;
-using StackGame.Units.Creators;
+using StackGame.Units.Proxy;
+using StackGame.Loggers;
 using System.Collections.Generic;
 using StackGame.Observers;
 using StackGame.Army;
@@ -9,78 +9,114 @@ using StackGame.Army.Factory;
 using StackGame.Commands;
 using StackGame.Strategy;
 using StackGame.Units.Abilities;
+using StackGame.Units.Models;
+using StackGame.GUI;
+
 namespace StackGame.Game
 {
     public class Engine
     {
         #region Свойства
 
-        public readonly CommandManager CommandManager = new CommandManager();
-		/// <summary>
+        public CommandManager CommandManager;
+        /// <summary>
 		/// Стратегия боя
 		/// </summary>
-		public static IStrategy currentStrategy;
-
-		/// <summary>
+        public IStrategy currentStrategy ;
+        /// <summary>
 		/// Экземпляр движка
 		/// </summary>
 		private static Engine EngineEntity;
-
         /// <summary>
         /// Первая армия
         /// </summary>
-        private readonly IArmy firstArmy;
-		/// <summary>
+        public IArmy firstArmy { get; private set; }
+        /// <summary>
 		/// Вторая армия
 		/// </summary>
-		private readonly IArmy secondArmy;
-		#endregion
+        public IArmy secondArmy { get; private set; }
+        /// <summary>
+        /// Счетчик ходов, за которые ни один юнит не умер ( поле для исключения ситуации блокировки)
+        /// </summary>
+        public int CurrentNumOfMovementWithoutDeath { get; set; }
+        /// <summary>
+        /// Флаг конца игры
+        /// </summary>
+        public bool IsGameEndsFlag => firstArmy.IsAllDead || secondArmy.IsAllDead;/// <summary>
+        /// Флаг есть ли возможность следующего хода - нет ли блокировки?
+        /// </summary>
+        public bool IsNextStepPossible => CurrentNumOfMovementWithoutDeath < GameConfigs.MaxNumberOfMovementsWithoutDeath;/// <summary>
+        /// Счетчик ходов
+        /// </summary>
+        public int CountOfMovements { get; set; }
+		public bool IsGameResultPrintsYet = false;
 
-
+        #endregion
 
         #region Инициализация
 
         /// <summary>
         /// Конструктор
         /// </summary>
-		private Engine()
-		{
-            var factory = new ArmyFactory();
-
-            firstArmy = new Army.Army("Армия №1", factory);
-            secondArmy = new Army.Army("Армия №2", factory);
-
-            List<IObserver> listOfObservers = new List<IObserver>()
-            {
-                new ConsoleBeepObserver(),
-                new FileObserver()
-            };
-
-            AddObservers(firstArmy, listOfObservers);
-            AddObservers(secondArmy, listOfObservers);
-
-		}
+		private Engine(){ }
 
 		#endregion
 
+        #region Методы
 
-
-		#region Методы
-
-		
 		/// <summary>
 		/// Получить экземпляр класса
 		/// </summary>
-		public static Engine GetEngine()
+		public static Engine GetInstance()
 		{
-            if (EngineEntity == null)
+			if (EngineEntity == null)
 			{
-                EngineEntity = new Engine();
+				EngineEntity = new Engine();
 			}
 
-            return EngineEntity;
+			return EngineEntity;
 		}
 
+        /// <summary>
+        /// Начало новый игры
+        /// </summary>
+        public void StartNewGame(int price)
+        {
+            // Создание фабричного метода
+			var factory = new ArmyFactory();
+
+            // Генерация армий
+			firstArmy = new Army.Army("Армия №1", factory, price);
+			secondArmy = new Army.Army("Армия №2", factory, price);
+
+            // Создание списка наблюдателей для юнитов
+			List<IObserver> listOfObservers = new List<IObserver>()
+			{
+				new ConsoleBeepObserver(),
+				new FileObserver()
+			};
+
+            // Добавление наблюдателей
+			AddObservers(firstArmy, listOfObservers);
+			AddObservers(secondArmy, listOfObservers);
+
+			// Создание менеджера команд
+			ILogger logger = new ConsoleLogger();
+			CommandManager = new CommandManager(logger);
+
+            logger = new FileLogger("HeavyInfantryProxyLog.txt");
+
+            ReplaceHeavyInfantryUnitsWithProxyUnits(firstArmy, logger);
+            ReplaceHeavyInfantryUnitsWithProxyUnits(secondArmy, logger);
+
+            // Задание текущей стратегии
+            currentStrategy = new OneVSOne();
+
+            CurrentNumOfMovementWithoutDeath = 0;
+            CountOfMovements = 0;
+            IsGameResultPrintsYet = false;
+		}
+		
 		/// <summary>
         /// Добавить возможных наблюдателей для армии
 		/// </summary>
@@ -98,40 +134,89 @@ namespace StackGame.Game
 			}
 		}
 
+        private void ReplaceHeavyInfantryUnitsWithProxyUnits(IArmy army, ILogger logger)
+        {
+            for (int i = 0; i < army.Units.Count; i++)
+            {
+                var currentUnit = army.Units[i];
+                if (currentUnit is HeavyInfantryUnit heavyInfantryUnit)
+                {
+                    var heavyInfantryUnitProxy = new HeavyInfantryUnitProxy(heavyInfantryUnit, logger);
+                    army.Units[i] = heavyInfantryUnitProxy;
+                }
+            }
+        }
+
 		/// <summary>
 		/// Следующий ход
 		/// </summary>
-		public bool NextStep()
+		public void NextStep()
 		{
-			if (firstArmy.IsAllDead || secondArmy.IsAllDead)
-			{
-				return false;
-			}
+            if (IsNextStepPossible == false)
+            {
+                return;
+            }
 
-            PrintArmyBeforeOrAfterStep("до");
+            if (IsGameEndsFlag == false)
+            {
+                var newCountOfMovements = CountOfMovements + 1;
+                var command = new ChangeCountOfMovementsCommand(CountOfMovements, newCountOfMovements);
+                CommandManager.Execute(command);
 
-            FirstStageOfBattle();
-            SecondStageOfBattle();
+                Console.WriteLine($"Ход № {CountOfMovements}");
+                FirstStageOfBattle();
+                SecondStageOfBattle();
 
-            // Убираем убитых из армии
-            ClearBattleField();
+                // Убираем убитых из армии
+                ClearBattleField();
 
-            PrintArmyBeforeOrAfterStep("после");
-            CommandManager.EndTheMovement();
-
-			return true;
+                CommandManager.EndTheMovement();
+            }
 		}
+
+        /// <summary>
+        /// Осуществить ходы до победы одной из армий
+        /// </summary>
+        public void PlayWhileNotEnd()
+        {
+            while ( IsNextStepPossible )
+            {
+                NextStep();
+
+                if(IsGameEndsFlag)
+                {
+                    return;
+                }
+            }
+        }
 
 		/// <summary>
 		/// Атаковать противника
 		/// </summary>
-		private void Hit(IUnit first, IUnit second)
+        private void Hit( IArmy allyArmy, int allyUnitPosition, IArmy enemyArmy, int enemyUnitPosition)
 		{
-            if (first.isAlive && first.Attack > 0)
+            if (allyArmy.Units.Count  == 0 || enemyArmy.Units.Count == 0)
+            {
+                return;
+            }
+            var allyUnit = allyArmy.Units[allyUnitPosition];
+            var enemyUnit = enemyArmy.Units[enemyUnitPosition];
+
+            if (allyUnit.IsAlive && allyUnit.Attack > 0 && enemyUnit.IsAlive)
 			{
-                var command = new HitCommand(first, second, first.Attack);
+                ICommand command = new HitCommand(allyUnit, enemyUnit, allyUnit.Attack);
 				CommandManager.Execute(command);
-			}
+
+                if (enemyUnit.IsAlive && enemyUnit is ICanBeImproved ICanBeImprovedUnit && ICanBeImprovedUnit.NumberOfImprovments > 0)
+                {
+                    double chance = Randomizer.CalculateChanceOfAction();
+                    if (chance > 0.75)
+                    {
+                        command = new DeleteImprovmentCommand(ICanBeImprovedUnit, enemyArmy, enemyUnitPosition);
+                        CommandManager.Execute(command);
+                    }
+                }
+            }
 		}
 
         /// <summary>
@@ -143,7 +228,7 @@ namespace StackGame.Game
             var queueForFirstStageOfBattle = currentStrategy.GetOpponentsQueue(firstArmy, secondArmy);
             foreach (var opponents in queueForFirstStageOfBattle)
 			{
-                Hit(opponents.AllyUnit, opponents.EnemyUnit);
+                Hit(opponents.AllyArmy, opponents.AllyUnitPosition, opponents.EnemyArmy, opponents.EnemyUnitPosition);
 			}
         }
 
@@ -165,20 +250,20 @@ namespace StackGame.Game
                 var _containers = new List<SpecialAbilityContainer>();
 
 				// для юнита из первой армии пытаемся получить структуру SpecialAbilityContainer,!!! индекс юнита передается по ссылке !!!
-				var firstArmyContainers = TryGetSpecialAbilityContainers(firstArmy, secondArmy, firstArmyUnitsCount, ref indexOfUnitInFirstArmy);
-                if (firstArmyContainers.HasValue)
+				var firstArmyContainer = TryGetSpecialAbilityContainers(firstArmy, secondArmy, firstArmyUnitsCount, ref indexOfUnitInFirstArmy);
+                if (firstArmyContainer.HasValue)
                 {
-                    var specialAbilityContainers = firstArmyContainers.Value;
-                    _containers.Add(specialAbilityContainers); 
+                    var specialAbilityContainer = firstArmyContainer.Value;
+                    _containers.Add(specialAbilityContainer); 
 
                 }
 
 				// для юнита из второй армии пытаемся получить структуру SpecialAbilityContainer,!!! индекс юнита передается по ссылке !!!
-                var secondArmyContainers  = TryGetSpecialAbilityContainers(secondArmy, firstArmy, secondArmyUnitsCount, ref indexOfUnitInSecondArmy);
-				if (secondArmyContainers.HasValue)
+                var secondArmyContainer  = TryGetSpecialAbilityContainers(secondArmy, firstArmy, secondArmyUnitsCount, ref indexOfUnitInSecondArmy);
+				if (secondArmyContainer.HasValue)
 				{
-					var specialAbilityContainers = secondArmyContainers.Value;
-					_containers.Add(specialAbilityContainers);
+					var specialAbilityContainer = secondArmyContainer.Value;
+					_containers.Add(specialAbilityContainer);
 				}
 
 				if (_containers.Count == 0)
@@ -187,16 +272,13 @@ namespace StackGame.Game
 				}
 
                 // если в списке 2 контейнера - сортируем их рандомно
-				if (_containers.Count == 2)
+				if (_containers.Count > 1)
 				{
-                    Random rnd = new Random();
-					_containers = _containers.OrderBy(item => rnd.Next()).ToList();
+                    _containers = Randomizer.IntermixIt(_containers).ToList();
 				}
 
-				foreach (var container in _containers)
+                foreach (var container in _containers)
 				{
-                    Console.WriteLine($" ❓❓❓ {container.UnitWithSpecialAbility.ToString()} проверяет возможность воздействия специальным навыком в " +
-                                      $" радиусе {container.RangeOfUnitsAffectedByUnitWithSpecialAbility.First()} ❓❓❓");
                     container.UnitWithSpecialAbility.DoSpecialAction(container.AffectedByUnitWithSpecialAbilityArmy, container.RangeOfUnitsAffectedByUnitWithSpecialAbility, container.PositionOfUnitWithSpecialAbility);
 				}
 			}
@@ -241,7 +323,7 @@ namespace StackGame.Game
 		IHaveSpecialAbility TryGetUnitWithSpecialAbulity(IArmy army, int unitPosition)
 		{
 			var unit = army.Units[unitPosition];
-			if (unit.isAlive && unit is IHaveSpecialAbility specialUnit)
+			if (unit.IsAlive && unit is IHaveSpecialAbility specialUnit)
 			{
 				return specialUnit;
 			}
@@ -250,25 +332,42 @@ namespace StackGame.Game
 		}
 
 		/// <summary>
+		/// Изменить стратегию
+		/// </summary>
+		public void ChangeStrategy(IStrategy strategy)
+		{
+            if (currentStrategy.GetType() != strategy.GetType())
+			{
+                ICommand command = new ChangeCurrentStrategyCommand(currentStrategy, strategy, CurrentNumOfMovementWithoutDeath);
+				CommandManager.Execute(command);
+
+                CommandManager.EndTheMovement();
+			}
+		}
+		/// <summary>
 		/// Удалить мертвых юнитов
 		/// </summary>
         private void ClearBattleField()
 		{
-            firstArmy.ClearBattleField();
-            secondArmy.ClearBattleField();
+
+            var firstArmyNumDeadUnits = firstArmy.ClearBattleField();
+            var secondArmyNumDeadUnits = secondArmy.ClearBattleField();
+
+            int newNumOfMovementWithoutDeath;
+
+            if (firstArmyNumDeadUnits == 0 && secondArmyNumDeadUnits == 0)
+			{
+                newNumOfMovementWithoutDeath = CurrentNumOfMovementWithoutDeath + 1;
+			}
+			else
+			{
+                newNumOfMovementWithoutDeath = 0;
+			}
+
+            var command = new ChangeCurrentNumOfMovementWithoutDeathCommand(CurrentNumOfMovementWithoutDeath, newNumOfMovementWithoutDeath);
+			CommandManager.Execute(command);
 		}
 
-        private void PrintArmyBeforeOrAfterStep( string state) 
-        {
-            Console.WriteLine("К бою!");
-            Console.WriteLine("*********************************");
-            Console.WriteLine($"Армия '{firstArmy.Name}' \"{state}\":");
-			Console.WriteLine(firstArmy.ToString());
-            Console.WriteLine($"Армия '{secondArmy.Name}' \"{state}\":");
-			Console.WriteLine("*********************************");
-			Console.WriteLine(secondArmy.ToString());
-            Console.WriteLine("*********************************");
-        }
 		#endregion
 	}
 }

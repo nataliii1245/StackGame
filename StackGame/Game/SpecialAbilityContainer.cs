@@ -1,15 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using StackGame;
+﻿using System.Collections.Generic;
 using StackGame.Army;
-using StackGame.Strategy;
-using StackGame.Units.Models;
 using StackGame.Units.Abilities;
 namespace StackGame.Game
 {
 	/// <summary>
-	/// Элементы задействованные специальными возможностями
+	/// Элементы, у которыхесть специальные навыки
 	/// </summary>
 	public struct SpecialAbilityContainer
     {

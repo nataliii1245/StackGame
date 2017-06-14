@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using StackGame;
-using StackGame.Army;
-using StackGame.Units.Models;
+﻿using StackGame.Army;
 namespace StackGame.Game
 {
     public struct FirstStageOpponents
@@ -11,29 +6,35 @@ namespace StackGame.Game
 		#region Свойства
 
 		/// <summary>
-		/// Единица армии
+		/// Исходная армия
 		/// </summary>
-		public IUnit AllyUnit { get; private set; }
+        public IArmy AllyArmy { get; private set; }
 		/// <summary>
-		/// Единица вражеской армии
+		/// Вражеская армия
 		/// </summary>
-		public IUnit EnemyUnit { get; private set; }
+        public IArmy EnemyArmy { get; private set; }
+		/// <summary>
+		/// Позиция юнита в исходной армии
+		/// </summary>
+        public int AllyUnitPosition { get; private set; }
+		/// <summary>
+		/// Позиция юнита во вражеской армии
+		/// </summary>
+        public int EnemyUnitPosition { get; private set; }
 
 		#endregion
-
-
 
         #region Инициализация
 
-		public FirstStageOpponents(IUnit allyUnit, IUnit enemyUnit)
+		public FirstStageOpponents(IArmy AllyArmy,int AllyUnitPosition,IArmy EnemyArmy, int EnemyUnitPosition)
 		{
-            AllyUnit = allyUnit;
-			EnemyUnit = enemyUnit;
+            this.AllyArmy = AllyArmy;
+            this.AllyUnitPosition = AllyUnitPosition;
+            this.EnemyArmy = EnemyArmy;
+            this.EnemyUnitPosition = EnemyUnitPosition;
 		}
 
 		#endregion
-
-
 
         #region Методы
 
@@ -42,11 +43,10 @@ namespace StackGame.Game
 		/// </summary>
 		public FirstStageOpponents Swap()
 		{
-            var opponents = new FirstStageOpponents(EnemyUnit, AllyUnit);
+            var opponents = new FirstStageOpponents(EnemyArmy, EnemyUnitPosition, AllyArmy, AllyUnitPosition);
 			return opponents;
 		}
 
-		
-		#endregion
+        #endregion
 	}
 }
