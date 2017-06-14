@@ -159,8 +159,7 @@ namespace StackGame.GUI
 
 		public static void ShowInfoAboutAuthor()
 		{
-
-			Console.WriteLine();
+            Console.WriteLine();
 			Console.WriteLine("✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦");
 			Console.WriteLine("✦             Лабораторная работа              ✦");
 			Console.WriteLine("✦                по  дисциплине                ✦");
