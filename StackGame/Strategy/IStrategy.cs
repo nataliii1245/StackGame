@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using StackGame.Game;
 using StackGame.Army;
 using StackGame.Units.Abilities;
-using StackGame.Units.Models;
 namespace StackGame.Strategy
 {
     public interface IStrategy

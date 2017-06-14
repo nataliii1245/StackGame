@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using StackGame;
 using StackGame.Army;
 using StackGame.Game;
-using StackGame.Units.Models;
 using StackGame.Units.Abilities;
 namespace StackGame.Strategy
 {
@@ -18,17 +16,14 @@ namespace StackGame.Strategy
 
         public List<FirstStageOpponents> GetOpponentsQueue(IArmy firstArmy, IArmy secondArmy) 
         {
-            var opponents = new FirstStageOpponents(firstArmy.Units[0], secondArmy.Units[0]);
+            var opponents = new FirstStageOpponents(firstArmy, 0, secondArmy, 0);
 
             var opponentsQueue = new List<FirstStageOpponents>
             {
                 opponents,
                 opponents.Swap()
             };
-
-            var rnd = new Random();
-
-            return opponentsQueue.OrderBy(item => rnd.Next()).ToList(); 
+            return opponentsQueue.OrderBy(item => Randomizer.random.Next()).ToList(); 
 		}
 
         public IEnumerable<int> GetUnitsRangeForSpecialAbility(IArmy allyArmy, IArmy enemyArmy, IHaveSpecialAbility unit, int unitPosition)
@@ -36,25 +31,24 @@ namespace StackGame.Strategy
             if (unitPosition == 0)
             {
                 return null;
-
             }
-                var targetArmy = unit.isFriendly ? allyArmy : enemyArmy;
 
-                Tuple<int, int> usingOfSpecialAbilityArea;
+            var targetArmy = unit.isFriendly ? allyArmy : enemyArmy;
 
-                if (targetArmy == allyArmy)
+            Tuple<int, int> usingOfSpecialAbilityArea;
+
+            if (unit.isFriendly)
+            {
+                usingOfSpecialAbilityArea = GetFirstEndLastIndexesOfAllyArmy(targetArmy, unitPosition, unit.SpecialAbilityRange);
+            }
+            else 
+            {
+                if (unitPosition - unit.SpecialAbilityRange >= 0)
                 {
-                    usingOfSpecialAbilityArea = GetFirstEndLastIndexesOfAllyArmy(allyArmy, unitPosition, unit.SpecialAbilityRange);
+                    return null;
                 }
-                else 
-                {
-                    if (unitPosition - unit.SpecialAbilityRange <= 0)
-                    {
-                        return null;
-                    }
-
-                    usingOfSpecialAbilityArea = GetFirstEndLastIndexesOfEnemyArmy(enemyArmy, unitPosition, unit.SpecialAbilityRange);
-                }
+                usingOfSpecialAbilityArea = GetFirstEndLastIndexesOfEnemyArmy(targetArmy, unitPosition, unit.SpecialAbilityRange);
+            }
 
             var startIndex = usingOfSpecialAbilityArea.Item1;
             var endIndex = usingOfSpecialAbilityArea.Item2;
@@ -77,13 +71,12 @@ namespace StackGame.Strategy
         private Tuple<int, int> GetFirstEndLastIndexesOfEnemyArmy(IArmy army, int unitPosition, int unitRange) 
         {
             var startPosition = 0;
-            var endPosition = Math.Abs(unitPosition - unitRange - 1);
+            var endPosition = Math.Abs(unitPosition - unitRange) - 1;
 
             if (endPosition >= army.Units.Count)
             {
                 endPosition = army.Units.Count - 1;
             }
-
             return new Tuple<int, int>(startPosition, endPosition);
         }
 
@@ -97,7 +90,7 @@ namespace StackGame.Strategy
 
             if (startPosition < 0)
             {
-              startPosition = 0;  
+                startPosition = 0;  
             }
 
             var endPosition = unitPosition + unitRange;
@@ -106,9 +99,9 @@ namespace StackGame.Strategy
 			{
 				endPosition = army.Units.Count - 1;
 			}
-
             return new Tuple<int, int>(startPosition, endPosition);
 		}
+
         #endregion
 
     }

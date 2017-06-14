@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using StackGame;
 using StackGame.Army;
 using StackGame.Game;
-using StackGame.Units.Models;
 using StackGame.Units.Abilities;
 namespace StackGame.Strategy
 {
@@ -19,8 +17,6 @@ namespace StackGame.Strategy
 
 		#endregion
 
-
-
         #region Инициализаторы
 
 		public NVSN(int n)
@@ -30,9 +26,7 @@ namespace StackGame.Strategy
 
 		#endregion
 
-
-
-		#region Методы
+        #region Методы
 
 		public List<FirstStageOpponents> GetOpponentsQueue(IArmy firstArmy, IArmy secondArmy)
 		{
@@ -45,7 +39,7 @@ namespace StackGame.Strategy
 
             for (int i = 0; i < numberUnitsInLine; i++)
             {
-                var opponents = new FirstStageOpponents(firstArmy.Units[i], secondArmy.Units[i]);
+                var opponents = new FirstStageOpponents(firstArmy, i, secondArmy, i);
 
 				var pairQueue = new List<FirstStageOpponents>
 				{
@@ -53,25 +47,19 @@ namespace StackGame.Strategy
 					opponents.Swap()
 				};
 
-				Random rnd = new Random();
-				opponentsQueue = opponentsQueue.Concat(pairQueue.OrderBy(item => rnd.Next())).ToList();
+                opponentsQueue = opponentsQueue.Concat(pairQueue.OrderBy(item => Randomizer.random.Next())).ToList();
 			}
-
-			return opponentsQueue;
-
-		}
+            return opponentsQueue;
+        }
 
 		public IEnumerable<int> GetUnitsRangeForSpecialAbility(IArmy allyArmy, IArmy enemyArmy, IHaveSpecialAbility unit, int unitPosition)
 		{
-            
-			// если напротив юнита кто-то стоит
+            // если напротив юнита кто-то стоит
 			if (unitPosition < n )
 			{
 				return null;
-
-			}
-
-			var targetArmy = unit.isFriendly ? allyArmy : enemyArmy;
+            }
+            var targetArmy = unit.isFriendly ? allyArmy : enemyArmy;
 			
 			int unitX;
 			int unitY;
@@ -86,8 +74,7 @@ namespace StackGame.Strategy
                 {
                     return null;
                 }
-
-				unitX = Math.Abs(unitPosition % n - (n - 1));
+                unitX = Math.Abs(unitPosition % n - (n - 1));
 				unitY = -unitPosition / n - 1;
 			}
 
@@ -96,10 +83,8 @@ namespace StackGame.Strategy
 			{
 				return indexes;
 			}
-
-			return null;
-
-		}
+            return null;
+        }
 
 		/// <summary>
 		/// Получить индексы юнитов , на которых может воздействовать рассматриваемый юнит с особыми навыками
