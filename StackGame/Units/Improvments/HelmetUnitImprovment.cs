@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using StackGame.Units.Abilities;
 using StackGame.Units.Models;
-using StackGame.Army;
+using StackGame.Configs;
 
 namespace StackGame.Units.Improvments
 {
@@ -12,14 +10,12 @@ namespace StackGame.Units.Improvments
 	/// </summary>
     public class HelmetUnitImprovment<T> : UnitToBeImproved<T> where T: IUnit, ICanBeImproved, ICanBeCloned
     {
-
         #region Свойства
 
 		/// <summary>
 		/// Защита шлема
 		/// </summary>
 		private int helmetDefence;
-
         /// <summary>
         /// Переопределяем защиту
         /// </summary>
@@ -27,27 +23,23 @@ namespace StackGame.Units.Improvments
 
 		#endregion
 
-
-
         #region Инициализация
 
         // конструктор шлема - улучшения
 		public HelmetUnitImprovment(T unit) : base(unit)
         {
-            var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Helmet];
+            var param = UnitImprovmentParameters.ImprovmentStats[UnitImprovmentTypes.Helmet];
 			helmetDefence = param.Defence;
 		}
 
 		#endregion
-
-
 
         #region Методы
 
         // метод, который позволяет клонировать шлем
 		public override IUnit Clone()
 		{
-			var clonedUnit = (T)unit.Clone();
+            var clonedUnit = (T)((T)Unit).Clone();
             var improvedClonedUnit = new HelmetUnitImprovment<T>(clonedUnit);
 
 			return improvedClonedUnit;
@@ -73,7 +65,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-			return $"{ base.ToString() } | шлем ♛ с защитой:  { helmetDefence } надет на рыцаря!|";
+			return $"{ base.ToString() } |шлем ♛ с защитой:  { helmetDefence }|";
 		}
 
 		#endregion

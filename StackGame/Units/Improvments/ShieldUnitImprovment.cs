@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using StackGame.Units.Models;
-using System.Collections.Generic;
 using StackGame.Units.Abilities;
-using StackGame.Units.Improvments;
-using StackGame.Army;
+using StackGame.Configs;
+
 namespace StackGame.Units.Improvments
 {
     public class ShieldUnitImprovment<T>: UnitToBeImproved<T> where T : IUnit, ICanBeImproved, ICanBeCloned
@@ -24,7 +22,7 @@ namespace StackGame.Units.Improvments
 
 		public ShieldUnitImprovment(T unit) : base(unit)
         {
-            var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Shield];
+            var param = UnitImprovmentParameters.ImprovmentStats[UnitImprovmentTypes.Shield];
 			shieldDefence = param.Defence;
 		}
 
@@ -34,7 +32,7 @@ namespace StackGame.Units.Improvments
 
 		public override IUnit Clone()
 		{
-			var clonedUnit = (T)unit.Clone();
+            var clonedUnit = (T)((T)Unit).Clone();
 			var improvedClonedUnit = new ShieldUnitImprovment<T>(clonedUnit);
 
 			return improvedClonedUnit;
@@ -59,7 +57,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-			return $"{ base.ToString() } | щит ◎ с защитой: { shieldDefence } вручен рыцарю!|";
+			return $"{ base.ToString() } |щит ◎ с защитой: { shieldDefence }|";
 		}
 
 		#endregion

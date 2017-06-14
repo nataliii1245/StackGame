@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using StackGame.Army;
-using StackGame.Units.Models;
 namespace StackGame.Units.Abilities
 {
     public interface IHaveSpecialAbility
@@ -23,7 +21,7 @@ namespace StackGame.Units.Abilities
 
 		#endregion
 
-		#region Методы
+        #region Методы
 
 		/// <summary>
 		/// Применить специальный навык

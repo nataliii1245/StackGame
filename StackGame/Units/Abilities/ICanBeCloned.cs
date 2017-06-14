@@ -1,5 +1,4 @@
-﻿using System;
-using StackGame.Units.Models;
+﻿using StackGame.Units.Models;
 namespace StackGame.Units.Abilities
 {
     public interface ICanBeCloned

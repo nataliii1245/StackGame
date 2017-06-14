@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using StackGame.Units.Abilities;
 using StackGame.Units.Models;
-using StackGame.Army;
+using StackGame.Configs;
 
 namespace StackGame.Units.Improvments
 {
@@ -19,8 +17,7 @@ namespace StackGame.Units.Improvments
 		/// Сила лошади
 		/// </summary>
 		private int horseAttack;
-
-		/// <summary>
+        /// <summary>
 		/// Переопределяем защиту
 		/// </summary>
 		public override int Defence => base.Defence + horseDefence;
@@ -38,21 +35,19 @@ namespace StackGame.Units.Improvments
         // конструктор коня - улучшения 
         public HorseUnitImprovment(T unit) : base(unit)
         {
-            var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Horse];
+            var param = UnitImprovmentParameters.ImprovmentStats[UnitImprovmentTypes.Horse];
             horseAttack = param.Attack;
             horseDefence = param.Defence;
 		}
 
 		#endregion
 
-
-
-		#region Методы
+        #region Методы
 
 		// метод, который позволяет клонировать коня
 		public override IUnit Clone()
 		{
-			var clonedUnit = (T)unit.Clone();
+            var clonedUnit = (T)((T)Unit).Clone();
             var improvedClonedUnit = new HorseUnitImprovment<T>(clonedUnit);
 
 			return improvedClonedUnit;
@@ -78,7 +73,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-            return $"{ base.ToString() } | лошадь ♞ c защитой : { horseDefence } и атакой:| {horseAttack} приведена в строй!";
+            return $"{ base.ToString() } |лошадь ♞ c защитой : { horseDefence } и атакой:| {horseAttack}|";
 		}
 
 		#endregion

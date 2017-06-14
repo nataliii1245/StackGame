@@ -1,10 +1,6 @@
-﻿using System;
-using System.Linq;
-using StackGame.Units.Models;
-using System.Collections.Generic;
+﻿using StackGame.Units.Models;
 using StackGame.Units.Abilities;
-using StackGame.Units.Improvments;
-using StackGame.Army;
+using StackGame.Configs;
 namespace StackGame.Units.Improvments
 {
     public class SpearUnitImprovment<T>: UnitToBeImproved<T> where T : IUnit, ICanBeImproved, ICanBeCloned
@@ -25,7 +21,7 @@ namespace StackGame.Units.Improvments
 
 		public SpearUnitImprovment(T unit) : base(unit)
         {
-            var param = StartStats.ImprovmentStats[UnitImprovmentTypes.Spear];
+            var param = UnitImprovmentParameters.ImprovmentStats[UnitImprovmentTypes.Spear];
             spearAttack = param.Attack;
 		}
 
@@ -35,7 +31,7 @@ namespace StackGame.Units.Improvments
 
 		public override IUnit Clone()
 		{
-			var clonedUnit = (T)unit.Clone();
+            var clonedUnit = (T)((T)Unit).Clone();
             var improvedClonedUnit = new SpearUnitImprovment<T>(clonedUnit);
 
 			return improvedClonedUnit;
@@ -43,7 +39,7 @@ namespace StackGame.Units.Improvments
 
 		public override string ToString()
 		{
-            return $"{ base.ToString() } |копье ⇐ с атакой: {spearAttack} вручено рыцарю!|";
+            return $"{ base.ToString() } |копье ⇐ с атакой: {spearAttack}|";
 		}
 
 		#endregion

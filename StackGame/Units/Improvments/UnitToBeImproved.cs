@@ -7,7 +7,7 @@ namespace StackGame.Units.Improvments
 	/// Улучшение юнита
 	/// </summary>
     /// Указывем, что UnitToBeImproved может использовать в качестве T только классы, которые реализуют IUnit, ICanBeCloned, ICanBeImproved
-    public abstract class UnitToBeImproved<T> : IUnit, ICanBeImproved, ICanBeCloned where T: IUnit, ICanBeCloned, ICanBeImproved
+    public abstract class UnitToBeImproved<T> : IUnitToBeImproved, IUnit, ICanBeImproved, ICanBeCloned where T: IUnit, ICanBeCloned, ICanBeImproved
     {
         
 		#region Свойства
@@ -15,36 +15,32 @@ namespace StackGame.Units.Improvments
 		/// <summary>
 		/// Улучшаемая единица армии
 		/// </summary>
-		protected T unit;
+        public IUnit Unit { get; protected set; }
 
-        public string Name => unit.Name;
+        public string Name => Unit.Name;
 		public int Health
 		{
-			get => unit.Health;
-			set => unit.Health = value;
+			get => Unit.Health;
+			set => Unit.Health = value;
 		}
-        public int MaxHealth => unit.MaxHealth;
-        public virtual int Attack => unit.Attack;
-		public virtual int Defence => unit.Defence;
+        public int MaxHealth => Unit.MaxHealth;
+        public virtual int Attack => Unit.Attack;
+		public virtual int Defence => Unit.Defence;
 
-        public bool isAlive => unit.isAlive;
+        public bool IsAlive => Unit.IsAlive;
 
-        public int NumberOfImprovments => unit.NumberOfImprovments + 1;
+        public int NumberOfImprovments => ((T)Unit).NumberOfImprovments + 1;
 
         #endregion
-
-
 
         #region Инициализация
 
 		protected UnitToBeImproved(T unit)
 		{
-			this.unit = unit;
+			this.Unit = unit;
 		}
 
 		#endregion
-
-
 
         #region Методы
 
@@ -61,15 +57,20 @@ namespace StackGame.Units.Improvments
 				return false;
 			}
             // иначе возвращаем истину
-            return unit.CanIBeImprovedWithFeatureOfThisType(type);
+            return ((T)Unit).CanIBeImprovedWithFeatureOfThisType(type);
 		}
 
         public abstract IUnit Clone();
 
 		public virtual void TakeDamage(int damage)
 		{
-			unit.TakeDamage(damage);
+			Unit.TakeDamage(damage);
 		}
+
+        public override string ToString()
+        {
+            return Unit.ToString();
+        }
 
 		#endregion
 	}

@@ -1,10 +1,10 @@
-﻿using System;
-using StackGame.Observers;
+﻿using StackGame.Observers;
 namespace StackGame.Units.Abilities
 {
     public interface ICanBeObserved
     {
         #region Методы
+
         /// <summary>
         ///  Добавить наблюдателя
         /// </summary>

@@ -1,5 +1,4 @@
-﻿using System;
-namespace StackGame.Units.Abilities
+﻿namespace StackGame.Units.Abilities
 {
     public interface ICanBeHealed
     {
