@@ -70,12 +70,11 @@
     <Compile Include="Strategy\AllVSAll.cs" />
     <Compile Include="Game\FirstStageOpponents.cs" />
     <Compile Include="Game\SpecialAbilityContainer.cs" />
-    <Compile Include="Units\UnitsFactoryMethod.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\CommandManager.cs" />
-    <Compile Include="Configs\UnitImprovmentStats.cs" />
+    <Compile Include="Configs\UnitImprovmentParameterTypes.cs" />
     <Compile Include="Configs\UnitImprovmentTypes.cs" />
-    <Compile Include="Configs\UnitsConfiguration.cs" />
+    <Compile Include="Configs\GameConfigs.cs" />
     <Compile Include="Configs\Randomizer.cs" />
     <Compile Include="Commands\HitCommand.cs" />
     <Compile Include="Commands\HealCommand.cs" />
@@ -89,6 +88,22 @@
     <Compile Include="Observers\ConsoleBeepObserver.cs" />
     <Compile Include="Observers\FileObserver.cs" />
     <Compile Include="Units\Abilities\ICanBeObserved.cs" />
+    <Compile Include="Commands\DeleteImprovmentCommand.cs" />
+    <Compile Include="Units\Improvments\IUnitToBeImproved.cs" />
+    <Compile Include="Loggers\ILogger.cs" />
+    <Compile Include="Loggers\ConsoleLogger.cs" />
+    <Compile Include="Loggers\FileLogger.cs" />
+    <Compile Include="Commands\ChangeCurrentNumOfMovementWithoutDeathCommand.cs" />
+    <Compile Include="Commands\ChangeCountOfMovementsCommand.cs" />
+    <Compile Include="Units\Proxy\HeavyInfantryUnitProxy.cs" />
+    <Compile Include="GUI\UserCommands.cs" />
+    <Compile Include="GUI\AvailiableStrategies.cs" />
+    <Compile Include="GUI\ConsoleGUI.cs" />
+    <Compile Include="Commands\ChangeCurrentStrategyCommand.cs" />
+    <Compile Include="Configs\UnitTypes.cs" />
+    <Compile Include="Configs\UnitParameterTypes.cs" />
+    <Compile Include="Configs\UnitParameters.cs" />
+    <Compile Include="Configs\UnitImprovmentParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Units\" />
@@ -103,6 +118,9 @@
     <Folder Include="Configs\" />
     <Folder Include="Army\Factory\" />
     <Folder Include="Observers\" />
+    <Folder Include="Loggers\" />
+    <Folder Include="Units\Proxy\" />
+    <Folder Include="GUI\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
